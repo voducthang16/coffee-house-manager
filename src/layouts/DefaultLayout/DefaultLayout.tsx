@@ -7,7 +7,7 @@ function DefaultLayout({ Children }: DefaultLayoutProps) {
         <div>
             <p>HEADER</p>
             <main className="mt-16">
-                <p>CHILDREN</p>
+                <Children />
             </main>
         </div>
     );

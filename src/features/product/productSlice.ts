@@ -2,10 +2,12 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
 import { fetchProduct } from './productAPI';
 
-interface ProductProps {
+export interface ProductProps {
+    _id: string;
     name: string;
     price: number;
     image: string;
+    status: number;
 }
 
 export interface ProductState {

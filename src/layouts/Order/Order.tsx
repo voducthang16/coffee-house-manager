@@ -1,14 +1,42 @@
-import images from '~/assets/images';
 import Image from '~/components/Image';
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '~/app/hooks';
 import { getProducts, fetchProductAsync } from '~/features/product/productSlice';
+import { getProductsOrder, OrderProps, insert, update } from '~/features/order/orderSlice';
+import { ToDoListIcon } from '~/components/Icons';
+
 function Order() {
     const dispatch = useAppDispatch();
     const products = useAppSelector(getProducts);
+    const productsOrder = useAppSelector(getProductsOrder);
     useEffect(() => {
         dispatch(fetchProductAsync());
-    }, []);
+    }, [dispatch]);
+    const addProductToOrder = (productId: string) => {
+        const findProduct = products.find((item: OrderProps) => item._id === productId) as OrderProps;
+        const product = { quantity: 1, ...findProduct };
+        const existProduct = productsOrder.find((item: OrderProps) => item._id === productId);
+        if (existProduct) {
+            const originalPrice = existProduct.price / existProduct.quantity!;
+            const updateQuantity = {
+                ...existProduct,
+                quantity: existProduct.quantity! + 1,
+                price: originalPrice * (existProduct.quantity! + 1),
+            };
+            dispatch(update(updateQuantity));
+        } else {
+            dispatch(insert(product));
+        }
+        // if (order.length === 0) {
+        //     order.push(product);
+        // } else {
+        //     let res = order.find((item: any) => item._id === productId);
+        //     if (res === undefined) {
+        //         order.push(res);
+        //     }
+        // }
+        // localStorage.setItem('order', JSON.stringify(order));
+    };
     return (
         <div className="bg-[#e8eaf2] py-20">
             <div className="container ">
@@ -41,7 +69,10 @@ function Order() {
                         <div className="grid grid-cols-4 gap-4 text-base text-center">
                             {products.map((item, index) => (
                                 <div key={index} className="col-span-1">
-                                    <div className="space-y-4 cursor-pointer">
+                                    <div
+                                        onClick={() => addProductToOrder(item._id)}
+                                        className="space-y-4 cursor-pointer"
+                                    >
                                         <Image
                                             src={item.image}
                                             className="w-full object-contain rounded-md"
@@ -55,8 +86,45 @@ function Order() {
                         </div>
                     </div>
                     <div className="col-span-3 bg-white rounded-lg p-4">
-                        <div>
-                            <h6 className="text-lg font-normal">Thanh toán</h6>
+                        <div className="flex flex-col justify-between h-full">
+                            <div className="space-y-4">
+                                <h6 className="text-2xl font-normal">Thanh toán</h6>
+                                {productsOrder.length !== 0 ? (
+                                    <div className="space-y-4">
+                                        {productsOrder.map((item, index) => (
+                                            <div key={index} className="flex text-sm">
+                                                <span className="mr-2 min-w-[24px]">{item.quantity} x</span>
+                                                <h6 className="break-words">{item.name}</h6>
+                                                <span className="ml-auto">
+                                                    {item.price.toLocaleString('it-IT', {
+                                                        style: 'currency',
+                                                        currency: 'VND',
+                                                    })}
+                                                </span>
+                                                <span className="ml-2">x</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="space-y-2 flex flex-col items-center">
+                                        <ToDoListIcon height={48} width={48} />
+                                        <p className="text-lg">Hiện chưa có dịch vụ</p>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex justify-between text-base">
+                                <span>Tổng cộng: </span>
+                                <span>
+                                    {productsOrder.length !== 0
+                                        ? productsOrder
+                                              .reduce((a, b) => a + b.price, 0)
+                                              .toLocaleString('it-IT', {
+                                                  style: 'currency',
+                                                  currency: 'VND',
+                                              })
+                                        : null}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>

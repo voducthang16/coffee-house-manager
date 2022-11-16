@@ -6,7 +6,7 @@ import { Counter } from '~/features/counter/Counter';
 // Pages
 import Home from '~/pages/Home';
 import Cashier from '~/pages/Cashier';
-
+import Payment from '~/pages/Payment';
 interface Routes {
     path: string;
     Component: React.ComponentType;
@@ -28,6 +28,10 @@ const publicRoutes: Routes[] = [
     {
         path: '/cashier',
         Component: Cashier,
+    },
+    {
+        path: '/payment',
+        Component: Payment,
     },
     {
         path: '/login',

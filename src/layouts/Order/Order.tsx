@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from '~/app/hooks';
 import { getProducts, fetchProductAsync } from '~/features/product/productSlice';
 import { getProductsOrder, OrderProps, insert, update, insertProductAsync } from '~/features/order/orderSlice';
 import { DeleteIcon, ToDoListIcon } from '~/components/Icons';
-
+import { Link } from 'react-router-dom';
 function Order() {
     const dispatch = useAppDispatch();
     const products = useAppSelector(getProducts);
@@ -50,8 +50,8 @@ function Order() {
         }
     };
     return (
-        <div className="bg-[#e8eaf2] py-20">
-            <div className="container ">
+        <div className="bg-[#e8eaf2]">
+            <div className="container h-screen flex items-center">
                 <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-2">
                         <div>
@@ -130,18 +130,25 @@ function Order() {
                                     </div>
                                 )}
                             </div>
-                            <div className="flex justify-between text-base">
-                                <span>Tổng cộng: </span>
-                                <span>
-                                    {productsOrder.length !== 0
-                                        ? productsOrder
-                                              .reduce((a, b) => a + b.price, 0)
-                                              .toLocaleString('it-IT', {
-                                                  style: 'currency',
-                                                  currency: 'VND',
-                                              })
-                                        : null}
-                                </span>
+                            <div className="space-y-4">
+                                <div className="flex justify-between text-base">
+                                    <span>Tổng cộng: </span>
+                                    <span>
+                                        {productsOrder.length !== 0
+                                            ? productsOrder
+                                                  .reduce((a, b) => a + b.price, 0)
+                                                  .toLocaleString('it-IT', {
+                                                      style: 'currency',
+                                                      currency: 'VND',
+                                                  })
+                                            : null}
+                                    </span>
+                                </div>
+                                <div className="flex justify-end">
+                                    <Link to={'/payment'} className="p-2 rounded-lg bg-blue-600 text-white text-base">
+                                        Thanh toán
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -2,8 +2,8 @@ import Image from '~/components/Image';
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '~/app/hooks';
 import { getProducts, fetchProductAsync } from '~/features/product/productSlice';
-import { getProductsOrder, OrderProps, insert, update } from '~/features/order/orderSlice';
-import { ToDoListIcon } from '~/components/Icons';
+import { getProductsOrder, OrderProps, insert, update, insertProductAsync } from '~/features/order/orderSlice';
+import { DeleteIcon, ToDoListIcon } from '~/components/Icons';
 
 function Order() {
     const dispatch = useAppDispatch();
@@ -13,9 +13,9 @@ function Order() {
         dispatch(fetchProductAsync());
     }, [dispatch]);
     const addProductToOrder = (productId: string) => {
-        const findProduct = products.find((item: OrderProps) => item._id === productId) as OrderProps;
+        const findProduct = products.find((item: OrderProps) => item.id === productId) as OrderProps;
         const product = { quantity: 1, ...findProduct };
-        const existProduct = productsOrder.find((item: OrderProps) => item._id === productId);
+        const existProduct = productsOrder.find((item: OrderProps) => item.id === productId);
         if (existProduct) {
             const originalPrice = existProduct.price / existProduct.quantity!;
             const updateQuantity = {
@@ -27,15 +27,27 @@ function Order() {
         } else {
             dispatch(insert(product));
         }
-        // if (order.length === 0) {
-        //     order.push(product);
-        // } else {
-        //     let res = order.find((item: any) => item._id === productId);
-        //     if (res === undefined) {
-        //         order.push(res);
-        //     }
-        // }
-        // localStorage.setItem('order', JSON.stringify(order));
+    };
+    const insertProductToOrder = (productId: string) => {
+        const existProduct = productsOrder.find((item: OrderProps) => item.id === productId);
+        if (existProduct) {
+            const originalPrice = existProduct.price / existProduct.quantity!;
+            const updateQuantity = {
+                ...existProduct,
+                quantity: existProduct.quantity! + 1,
+                price: originalPrice * (existProduct.quantity! + 1),
+            };
+            dispatch(update(updateQuantity));
+        } else {
+            // dispatch(insert(product));
+            dispatch(
+                insertProductAsync({
+                    cashier: 'Vo Duc Thang',
+                    productId: productId,
+                    quantity: 1,
+                }),
+            );
+        }
     };
     return (
         <div className="bg-[#e8eaf2] py-20">
@@ -65,12 +77,12 @@ function Order() {
                             </ul>
                         </div>
                     </div>
-                    <div className="col-span-7 bg-white p-4 rounded-lg">
-                        <div className="grid grid-cols-4 gap-4 text-base text-center">
-                            {products.map((item, index) => (
+                    <div className="col-span-6 bg-white p-4 rounded-lg">
+                        <div className="grid grid-cols-3 gap-4 text-base text-center">
+                            {products?.map((item, index) => (
                                 <div key={index} className="col-span-1">
                                     <div
-                                        onClick={() => addProductToOrder(item._id)}
+                                        onClick={() => addProductToOrder(item.id)}
                                         className="space-y-4 cursor-pointer"
                                     >
                                         <Image
@@ -85,7 +97,7 @@ function Order() {
                             ))}
                         </div>
                     </div>
-                    <div className="col-span-3 bg-white rounded-lg p-4">
+                    <div className="col-span-4 bg-white rounded-lg p-4">
                         <div className="flex flex-col justify-between h-full">
                             <div className="space-y-4">
                                 <h6 className="text-2xl font-normal">Thanh toán</h6>
@@ -101,7 +113,13 @@ function Order() {
                                                         currency: 'VND',
                                                     })}
                                                 </span>
-                                                <span className="ml-2">x</span>
+                                                <span className="ml-2">
+                                                    <DeleteIcon
+                                                        width={16}
+                                                        height={16}
+                                                        className="cursor-pointer hover:opacity-60 transition-all"
+                                                    />
+                                                </span>
                                             </div>
                                         ))}
                                     </div>

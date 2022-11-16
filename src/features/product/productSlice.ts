@@ -3,7 +3,7 @@ import { RootState, AppThunk } from '../../app/store';
 import { fetchProduct } from './productAPI';
 
 export interface ProductProps {
-    _id: string;
+    id: string;
     name: string;
     price: number;
     image: string;
@@ -46,7 +46,7 @@ export const productSlice = createSlice({
             })
             .addCase(fetchProductAsync.fulfilled, (state, action) => {
                 state.status = 'idle';
-                state.value = action.payload;
+                state.value = action.payload.data;
             })
             .addCase(fetchProductAsync.rejected, (state) => {
                 state.status = 'failed';

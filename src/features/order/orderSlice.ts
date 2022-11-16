@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { fetchProduct } from './orderAPI';
+import { insertProductToOrder } from './orderAPI';
 
 export interface OrderProps {
-    _id: string;
+    id: string;
     name: string;
     image: string;
     price: number;
@@ -21,10 +21,10 @@ const initialState: OrderState = {
     status: 'idle',
 };
 
-// export const fetchProductAsync = createAsyncThunk('product/fetchProducts', async () => {
-//     const response = await fetchProduct();
-//     return response.data;
-// });
+export const insertProductAsync = createAsyncThunk('product/insertProduct', async (item: any) => {
+    const response = await insertProductToOrder(item);
+    return response.data;
+});
 
 export const orderSlice = createSlice({
     name: 'order',
@@ -34,32 +34,26 @@ export const orderSlice = createSlice({
             state.value.push(payload);
         },
         update: (state, { payload }: PayloadAction<OrderProps>) => {
-            const newArray = state.value.map((item: OrderProps) => (item._id === payload._id ? payload : item));
+            const newArray = state.value.map((item: OrderProps) => (item.id === payload.id ? payload : item));
             state.value = newArray;
         },
-        // increment: (state) => {
-        //     state.value += 1;
-        // },
-        // decrement: (state) => {
-        //     state.value -= 1;
-        // },
         // incrementByAmount: (state, action: PayloadAction<number>) => {
         //     state.value += action.payload;
         // },
     },
-    // extraReducers: (builder) => {
-    //     builder
-    //         .addCase(fetchProductAsync.pending, (state) => {
-    //             state.status = 'loading';
-    //         })
-    //         .addCase(fetchProductAsync.fulfilled, (state, action) => {
-    //             state.status = 'idle';
-    //             state.value = action.payload;
-    //         })
-    //         .addCase(fetchProductAsync.rejected, (state) => {
-    //             state.status = 'failed';
-    //         });
-    // },
+    extraReducers: (builder) => {
+        builder
+            .addCase(insertProductAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(insertProductAsync.fulfilled, (state, action) => {
+                state.status = 'idle';
+                state.value = action.payload.value;
+            })
+            .addCase(insertProductAsync.rejected, (state) => {
+                state.status = 'failed';
+            });
+    },
 });
 
 export const { insert, update } = orderSlice.actions;

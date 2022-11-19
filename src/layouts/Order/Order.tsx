@@ -5,7 +5,20 @@ import { getProducts, fetchProductAsync } from '~/features/product/productSlice'
 import { getProductsOrder, OrderProps, insert, update, insertProductAsync } from '~/features/order/orderSlice';
 import { DeleteIcon, ToDoListIcon } from '~/components/Icons';
 import { Link } from 'react-router-dom';
+import {
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    Button,
+} from '@chakra-ui/react';
+import Payment from '../Payment';
 function Order() {
+    const { isOpen: isPaymentOpen, onOpen: onPaymentOpen, onClose: onPaymentClose } = useDisclosure();
     const dispatch = useAppDispatch();
     const products = useAppSelector(getProducts);
     const productsOrder = useAppSelector(getProductsOrder);
@@ -134,26 +147,52 @@ function Order() {
                                 <div className="flex justify-between text-base">
                                     <span>Tổng cộng: </span>
                                     <span>
-                                        {productsOrder.length !== 0
-                                            ? productsOrder
-                                                  .reduce((a, b) => a + b.price, 0)
-                                                  .toLocaleString('it-IT', {
-                                                      style: 'currency',
-                                                      currency: 'VND',
-                                                  })
-                                            : null}
+                                        {productsOrder.length !== 0 ? (
+                                            productsOrder
+                                                .reduce((a, b) => a + b.price, 0)
+                                                .toLocaleString('it-IT', {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                })
+                                        ) : (
+                                            <span>0 VND</span>
+                                        )}
                                     </span>
                                 </div>
-                                <div className="flex justify-end">
-                                    <Link to={'/payment'} className="p-2 rounded-lg bg-blue-600 text-white text-base">
-                                        Thanh toán
-                                    </Link>
-                                </div>
+                                {productsOrder.length !== 0 ? (
+                                    <div className="flex justify-end">
+                                        <button
+                                            onClick={onPaymentOpen}
+                                            className="p-2 rounded-lg bg-blue-600 text-white text-base"
+                                        >
+                                            Thanh toán
+                                        </button>
+                                    </div>
+                                ) : null}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Payment Modal */}
+            <Modal isOpen={isPaymentOpen} onClose={onPaymentClose} scrollBehavior={'inside'}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Thanh toán</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Payment />
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button colorScheme="red" mr={3} onClick={onPaymentClose}>
+                            Hủy
+                        </Button>
+                        <Button colorScheme="blue">Thanh toán</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     );
 }

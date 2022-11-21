@@ -8,6 +8,7 @@ export interface ProductProps {
     price: number;
     image: string;
     status: number;
+    quantity?: number;
 }
 
 export interface ProductState {

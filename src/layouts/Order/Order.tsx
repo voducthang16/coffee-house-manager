@@ -1,8 +1,16 @@
 import Image from '~/components/Image';
 import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '~/app/hooks';
-import { getProducts, fetchProductAsync } from '~/features/product/productSlice';
-import { getProductsOrder, OrderProps, insert, update, insertProductAsync } from '~/features/order/orderSlice';
+import { getProducts, fetchProductAsync, ProductProps } from '~/features/product/productSlice';
+import {
+    getProductsOrder,
+    OrderProps,
+    insert,
+    update,
+    empty,
+    createOrderAsync,
+    createOrderDetailAsync,
+} from '~/features/order/orderSlice';
 import { DeleteIcon, ToDoListIcon } from '~/components/Icons';
 import {
     useDisclosure,
@@ -14,9 +22,10 @@ import {
     ModalBody,
     ModalCloseButton,
     Button,
+    useToast,
 } from '@chakra-ui/react';
 import './Order.scss';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 function Order() {
     const { isOpen: isPaymentOpen, onOpen: onPaymentOpen, onClose: onPaymentClose } = useDisclosure();
@@ -27,6 +36,8 @@ function Order() {
         dispatch(fetchProductAsync());
     }, [dispatch]);
 
+    const toast = useToast();
+
     const addProductToOrder = (productId: string) => {
         const findProduct = products.find((item: OrderProps) => item.id === productId) as OrderProps;
         const product = { quantity: 1, ...findProduct };
@@ -36,37 +47,27 @@ function Order() {
             const updateQuantity = {
                 ...existProduct,
                 quantity: existProduct.quantity! + 1,
-                price: originalPrice * (existProduct.quantity! + 1),
+                total: originalPrice * (existProduct.quantity! + 1),
             };
             dispatch(update(updateQuantity));
         } else {
             dispatch(insert(product));
         }
     };
-    const insertProductToOrder = (productId: string) => {
-        const existProduct = productsOrder.find((item: OrderProps) => item.id === productId);
-        if (existProduct) {
-            const originalPrice = existProduct.price / existProduct.quantity!;
-            const updateQuantity = {
-                ...existProduct,
-                quantity: existProduct.quantity! + 1,
-                price: originalPrice * (existProduct.quantity! + 1),
-            };
-            dispatch(update(updateQuantity));
-        } else {
-            // dispatch(insert(product));
-            dispatch(
-                insertProductAsync({
-                    cashier: 'Vo Duc Thang',
-                    productId: productId,
-                    quantity: 1,
-                }),
-            );
-        }
-    };
     // Payment
     const [pay, setPay] = useState(false);
-    const { register, handleSubmit, watch } = useForm();
+    const { register, handleSubmit, watch } = useForm({
+        defaultValues: {
+            discount: 0,
+            discount_reason: '',
+            surcharge: 0,
+            surcharge_reason: '',
+            tax: 10,
+            note: '',
+            payment_type: 0,
+            voucher: '',
+        },
+    });
 
     let tempTotal: number | undefined = 0;
 
@@ -91,6 +92,7 @@ function Order() {
     if (tax) {
         taxValue = (tax / 100) * tempTotal;
     }
+
     return (
         <div className="bg-[#e8eaf2]">
             <div className="container h-screen flex items-center">
@@ -209,8 +211,8 @@ function Order() {
                 <ModalOverlay />
                 <form
                     onSubmit={handleSubmit((data) => {
-                        dispatch(
-                            insertProductAsync({
+                        const result = dispatch(
+                            createOrderAsync({
                                 user_id: 1,
                                 client: 'Nhi',
                                 total: tempTotal! - discountValue! + surchargeValue! + taxValue!,
@@ -218,6 +220,35 @@ function Order() {
                                 ...data,
                             }),
                         );
+                        result
+                            .then((res) => {
+                                const id = res.payload.id;
+                                if (res.payload.success) {
+                                    productsOrder.forEach((product: ProductProps, index: number) => {
+                                        dispatch(
+                                            createOrderDetailAsync({
+                                                order_id: id,
+                                                product_id: product.id,
+                                                quantity: product.quantity,
+                                                total: product.price,
+                                            }),
+                                        );
+                                        if (index === productsOrder.length - 1) {
+                                            dispatch(empty());
+                                            toast({
+                                                title: 'success',
+                                                description: 'Thanh toán đơn hàng thành công',
+                                                status: 'success',
+                                                position: 'top-right',
+                                                duration: 3000,
+                                                isClosable: true,
+                                            });
+                                            onPaymentClose();
+                                        }
+                                    });
+                                }
+                            })
+                            .catch((err) => console.log(err));
                     })}
                 >
                     <ModalContent>

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { insertProductToOrder } from './orderAPI';
+import { createOrder, createOrderDetail } from './orderAPI';
 
 export interface OrderProps {
     id: string;
@@ -21,8 +21,13 @@ const initialState: OrderState = {
     status: 'idle',
 };
 
-export const insertProductAsync = createAsyncThunk('product/insertProduct', async (item: any) => {
-    const response = await insertProductToOrder(item);
+export const createOrderAsync = createAsyncThunk('order/create', async (item: any) => {
+    const response = await createOrder(item);
+    return response.data;
+});
+
+export const createOrderDetailAsync = createAsyncThunk('order/create-detail', async (item: any) => {
+    const response = await createOrderDetail(item);
     return response.data;
 });
 
@@ -37,23 +42,34 @@ export const orderSlice = createSlice({
             const newArray = state.value.map((item: OrderProps) => (item.id === payload.id ? payload : item));
             state.value = newArray;
         },
+        empty: (state) => {
+            state.value = [];
+        },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(insertProductAsync.pending, (state) => {
+            .addCase(createOrderAsync.pending, (state) => {
                 state.status = 'loading';
             })
-            .addCase(insertProductAsync.fulfilled, (state, action) => {
+            .addCase(createOrderAsync.fulfilled, (state, action) => {
                 state.status = 'idle';
-                state.value = [];
             })
-            .addCase(insertProductAsync.rejected, (state) => {
+            .addCase(createOrderAsync.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(createOrderDetailAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(createOrderDetailAsync.fulfilled, (state, action) => {
+                state.status = 'idle';
+            })
+            .addCase(createOrderDetailAsync.rejected, (state) => {
                 state.status = 'failed';
             });
     },
 });
 
-export const { insert, update } = orderSlice.actions;
+export const { insert, update, empty } = orderSlice.actions;
 
 export const getProductsOrder = (state: RootState) => state.order.value;
 

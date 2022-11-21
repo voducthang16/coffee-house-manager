@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { fetchProduct } from './productAPI';
+import { fetchProduct, fetchProductByCategory } from './productAPI';
 
 export interface ProductProps {
     id: string;
@@ -26,20 +26,15 @@ export const fetchProductAsync = createAsyncThunk('product/fetchProducts', async
     return response.data;
 });
 
+export const fetchProductByCategoryAsync = createAsyncThunk('product/fetchProductsByCategory', async (id: number) => {
+    const response = await fetchProductByCategory(id);
+    return response.data;
+});
+
 export const productSlice = createSlice({
     name: 'product',
     initialState,
-    reducers: {
-        // increment: (state) => {
-        //     state.value += 1;
-        // },
-        // decrement: (state) => {
-        //     state.value -= 1;
-        // },
-        // incrementByAmount: (state, action: PayloadAction<number>) => {
-        //     state.value += action.payload;
-        // },
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(fetchProductAsync.pending, (state) => {
@@ -51,6 +46,10 @@ export const productSlice = createSlice({
             })
             .addCase(fetchProductAsync.rejected, (state) => {
                 state.status = 'failed';
+            })
+            .addCase(fetchProductByCategoryAsync.fulfilled, (state, action) => {
+                state.status = 'idle';
+                state.value = action.payload.data;
             });
     },
 });
@@ -58,14 +57,5 @@ export const productSlice = createSlice({
 // export const { increment, decrement, incrementByAmount } = productSlice.actions;
 
 export const getProducts = (state: RootState) => state.product.value;
-
-// export const incrementIfOdd =
-//     (amount: number): AppThunk =>
-//     (dispatch, getState) => {
-//         const currentValue = getProducts(getState());
-//         if (currentValue % 2 === 1) {
-//             dispatch(incrementByAmount(amount));
-//         }
-//     };
 
 export default productSlice.reducer;

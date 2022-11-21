@@ -1,7 +1,13 @@
 import Image from '~/components/Image';
 import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '~/app/hooks';
-import { getProducts, fetchProductAsync, ProductProps } from '~/features/product/productSlice';
+import { getCategory, fetchCategoryAsync, CategoryProps } from '~/features/category/categorySlice';
+import {
+    getProducts,
+    fetchProductAsync,
+    fetchProductByCategoryAsync,
+    ProductProps,
+} from '~/features/product/productSlice';
 import {
     getProductsOrder,
     OrderProps,
@@ -31,9 +37,13 @@ function Order() {
     const { isOpen: isPaymentOpen, onOpen: onPaymentOpen, onClose: onPaymentClose } = useDisclosure();
     const dispatch = useAppDispatch();
     const products = useAppSelector(getProducts);
+    const category = useAppSelector(getCategory);
     const productsOrder = useAppSelector(getProductsOrder);
     useEffect(() => {
         dispatch(fetchProductAsync());
+    }, [dispatch]);
+    useEffect(() => {
+        dispatch(fetchCategoryAsync());
     }, [dispatch]);
 
     const toast = useToast();
@@ -47,7 +57,7 @@ function Order() {
             const updateQuantity = {
                 ...existProduct,
                 quantity: existProduct.quantity! + 1,
-                total: originalPrice * (existProduct.quantity! + 1),
+                price: originalPrice * (existProduct.quantity! + 1),
             };
             dispatch(update(updateQuantity));
         } else {
@@ -93,6 +103,9 @@ function Order() {
         taxValue = (tax / 100) * tempTotal;
     }
 
+    // category
+    const [tab, setTab] = useState(0);
+
     return (
         <div className="bg-[#e8eaf2]">
             <div className="container h-screen flex items-center">
@@ -101,29 +114,38 @@ function Order() {
                         <div>
                             <ul className="text-lg font-normal text-center space-y-4">
                                 <li
-                                    className="bg-[#ff9d00] text-white py-2 rounded-lg 
-                                    cursor-pointer hover:opacity-80 transition-all"
+                                    onClick={() => {
+                                        setTab(0);
+                                        dispatch(fetchProductAsync());
+                                    }}
+                                    className={`${
+                                        tab === 0 ? '!bg-[#ff9d00] !text-white' : null
+                                    } bg-white text-black py-2 rounded-lg 
+                                        cursor-pointer hover:opacity-80 transition-all duration-300`}
                                 >
-                                    Cà phê
+                                    Tất cả
                                 </li>
-                                <li
-                                    className="bg-white py-2 rounded-lg 
-                                    cursor-pointer hover:opacity-80 transition-all"
-                                >
-                                    Trà
-                                </li>
-                                <li
-                                    className="bg-white py-2 rounded-lg 
-                                    cursor-pointer hover:opacity-80 transition-all"
-                                >
-                                    Bánh & Snack
-                                </li>
+                                {category?.map((item: CategoryProps, index) => (
+                                    <li
+                                        onClick={() => {
+                                            setTab(index + 1);
+                                            dispatch(fetchProductByCategoryAsync(index + 1));
+                                        }}
+                                        key={index}
+                                        className={`${
+                                            tab === index + 1 ? '!bg-[#ff9d00] !text-white' : null
+                                        } bg-white text-black py-2 rounded-lg 
+                                        cursor-pointer hover:opacity-80 transition-all duration-300`}
+                                    >
+                                        {item.name}
+                                    </li>
+                                ))}
                             </ul>
                         </div>
                     </div>
                     <div className="col-span-6 bg-white p-4 rounded-lg">
                         <div className="grid grid-cols-3 gap-4 text-base text-center">
-                            {products?.map((item, index) => (
+                            {products?.map((item: ProductProps, index) => (
                                 <div key={index} className="col-span-1">
                                     <div
                                         onClick={() => addProductToOrder(item.id)}

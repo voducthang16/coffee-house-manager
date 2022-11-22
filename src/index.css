@@ -6,3 +6,11 @@
     @apply w-full mx-auto px-4 2xl:max-w-screen-2xl 2xl:px-32 
     xl:max-w-screen-xl xl:px-10 lg:max-w-screen-lg md:max-w-screen-md sm:max-w-screen-sm;
 }
+
+.input-form {
+    @apply shadow-md rounded-lg focus:ring-2 focus:ring-offset-0 focus:ring-blue-400 focus:ring-opacity-50 focus:shadow-none;
+}
+
+.input-search {
+    @apply block w-full py-3 px-4 text-base outline-none bg-slate-100 shadow-none;
+}

@@ -13,6 +13,7 @@ import {
     OrderProps,
     insert,
     update,
+    remove,
     empty,
     createOrderAsync,
     createOrderDetailAsync,
@@ -48,7 +49,7 @@ function Order() {
 
     const toast = useToast();
 
-    const addProductToOrder = (productId: string) => {
+    const addProductToOrder = (productId: number) => {
         const findProduct = products.find((item: OrderProps) => item.id === productId) as OrderProps;
         const product = { quantity: 1, ...findProduct };
         const existProduct = productsOrder.find((item: OrderProps) => item.id === productId);
@@ -64,13 +65,17 @@ function Order() {
             dispatch(insert(product));
         }
     };
+
+    const deleteProductInOrder = (productId: number) => {
+        dispatch(remove(productId));
+    };
     // Payment
     const [pay, setPay] = useState(false);
     const { register, handleSubmit, watch } = useForm({
         defaultValues: {
-            discount: 0,
+            discount: '',
             discount_reason: '',
-            surcharge: 0,
+            surcharge: '',
             surcharge_reason: '',
             tax: 10,
             note: '',
@@ -85,16 +90,16 @@ function Order() {
         tempTotal = +productsOrder.reduce((a, b) => a + b.price, 0);
     }
 
-    const discount: number = watch('discount');
+    const discount: string = watch('discount');
     let discountValue: number | undefined = 0;
     if (discount) {
-        discountValue = (discount / 100) * tempTotal;
+        discountValue = (+discount / 100) * tempTotal;
     }
 
-    const surcharge: number = watch('surcharge');
+    const surcharge: string = watch('surcharge');
     let surchargeValue: number | undefined = 0;
     if (surcharge) {
-        surchargeValue = (surcharge / 100) * tempTotal;
+        surchargeValue = (+surcharge / 100) * tempTotal;
     }
 
     const tax: number = watch('tax');
@@ -107,41 +112,39 @@ function Order() {
     const [tab, setTab] = useState(0);
 
     return (
-        <div className="bg-[#e8eaf2]">
-            <div className="container h-screen flex items-center">
-                <div className="grid grid-cols-12 gap-4">
+        <div>
+            <div className="container">
+                <div className="grid grid-cols-12 gap-4 pt-10">
                     <div className="col-span-2">
-                        <div>
-                            <ul className="text-lg font-normal text-center space-y-4">
+                        <ul className="text-lg font-normal text-center space-y-4">
+                            <li
+                                onClick={() => {
+                                    setTab(0);
+                                    dispatch(fetchProductAsync());
+                                }}
+                                className={`${
+                                    tab === 0 ? '!bg-[#ff9d00] !text-white' : null
+                                } bg-white text-black py-2 rounded-lg 
+                                        cursor-pointer hover:opacity-80 transition-all duration-300`}
+                            >
+                                Tất cả
+                            </li>
+                            {category?.map((item: CategoryProps, index) => (
                                 <li
                                     onClick={() => {
-                                        setTab(0);
-                                        dispatch(fetchProductAsync());
+                                        setTab(index + 1);
+                                        dispatch(fetchProductByCategoryAsync(index + 1));
                                     }}
+                                    key={index}
                                     className={`${
-                                        tab === 0 ? '!bg-[#ff9d00] !text-white' : null
+                                        tab === index + 1 ? '!bg-[#ff9d00] !text-white' : null
                                     } bg-white text-black py-2 rounded-lg 
                                         cursor-pointer hover:opacity-80 transition-all duration-300`}
                                 >
-                                    Tất cả
+                                    {item.name}
                                 </li>
-                                {category?.map((item: CategoryProps, index) => (
-                                    <li
-                                        onClick={() => {
-                                            setTab(index + 1);
-                                            dispatch(fetchProductByCategoryAsync(index + 1));
-                                        }}
-                                        key={index}
-                                        className={`${
-                                            tab === index + 1 ? '!bg-[#ff9d00] !text-white' : null
-                                        } bg-white text-black py-2 rounded-lg 
-                                        cursor-pointer hover:opacity-80 transition-all duration-300`}
-                                    >
-                                        {item.name}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                            ))}
+                        </ul>
                     </div>
                     <div className="col-span-6 bg-white p-4 rounded-lg">
                         <div className="grid grid-cols-3 gap-4 text-base text-center">
@@ -179,7 +182,12 @@ function Order() {
                                                         currency: 'VND',
                                                     })}
                                                 </span>
-                                                <span className="ml-2">
+                                                <span
+                                                    onClick={() => {
+                                                        deleteProductInOrder(item.id);
+                                                    }}
+                                                    className="ml-2"
+                                                >
                                                     <DeleteIcon
                                                         width={16}
                                                         height={16}

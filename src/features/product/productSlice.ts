@@ -3,7 +3,7 @@ import { RootState, AppThunk } from '../../app/store';
 import { fetchProduct, fetchProductByCategory } from './productAPI';
 
 export interface ProductProps {
-    id: string;
+    id: number;
     name: string;
     price: number;
     image: string;

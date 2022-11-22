@@ -3,7 +3,7 @@ import { RootState, AppThunk } from '../../app/store';
 import { createOrder, createOrderDetail } from './orderAPI';
 
 export interface OrderProps {
-    id: string;
+    id: number;
     name: string;
     image: string;
     price: number;
@@ -42,6 +42,11 @@ export const orderSlice = createSlice({
             const newArray = state.value.map((item: OrderProps) => (item.id === payload.id ? payload : item));
             state.value = newArray;
         },
+        remove: (state, { payload }: PayloadAction<number>) => {
+            const removeProduct = state.value.find((item: OrderProps) => item.id === payload) as OrderProps;
+            const index = state.value.indexOf(removeProduct);
+            state.value.splice(index, 1);
+        },
         empty: (state) => {
             state.value = [];
         },
@@ -69,7 +74,7 @@ export const orderSlice = createSlice({
     },
 });
 
-export const { insert, update, empty } = orderSlice.actions;
+export const { insert, update, remove, empty } = orderSlice.actions;
 
 export const getProductsOrder = (state: RootState) => state.order.value;
 

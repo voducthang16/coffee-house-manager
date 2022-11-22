@@ -2,7 +2,7 @@ import { CashierIcon, DashboardIcon, InvoiceIcon, RestaurantIcon } from '~/compo
 import { Link } from 'react-router-dom';
 function Home() {
     return (
-        <div className="container overflow-hidden">
+        <div className="container bg-white py-10 mt-10">
             <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-3">
                     <Link to={'/'} className="p-4 rounded-lg flex flex-col items-center justify-center bg-[#eeedef]">

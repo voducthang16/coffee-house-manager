@@ -1,7 +1,7 @@
 import Order from '~/layouts/Order';
 function Cashier() {
     return (
-        <div className="overflow-hidden">
+        <div>
             <Order />
         </div>
     );

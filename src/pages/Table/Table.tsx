@@ -8,7 +8,7 @@ function Table() {
     const table = useAppSelector(getTables);
     useEffect(() => {
         dispatch(fetchTableAsync(status));
-    }, [dispatch]);
+    }, [dispatch, status]);
     return (
         <div>
             <div className="container pt-20">

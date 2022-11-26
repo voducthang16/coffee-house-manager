@@ -19,6 +19,8 @@ import {
     createOrderDetailAsync,
     getPaymentMobile,
     payment_mobile,
+    table,
+    getTable,
 } from '~/features/order/orderSlice';
 import { CloseIcon, DeleteIcon, SearchIcon, ToDoListIcon } from '~/components/Icons';
 import {
@@ -35,18 +37,24 @@ import {
 } from '@chakra-ui/react';
 import './Order.scss';
 import { useForm } from 'react-hook-form';
+import { fetchTableAvailableAsync, getTablesAvailable, removeTable } from '~/features/table/tableSlice';
 
 function Order() {
     const { isOpen: isPaymentOpen, onOpen: onPaymentOpen, onClose: onPaymentClose } = useDisclosure();
     const dispatch = useAppDispatch();
     const products = useAppSelector(getProducts);
+    const tableId = useAppSelector(getTable);
     const category = useAppSelector(getCategory);
+    const tableAvailable = useAppSelector(getTablesAvailable);
     const productsOrder = useAppSelector(getProductsOrder);
     useEffect(() => {
         dispatch(fetchProductAsync());
     }, [dispatch]);
     useEffect(() => {
         dispatch(fetchCategoryAsync());
+    }, [dispatch]);
+    useEffect(() => {
+        dispatch(fetchTableAvailableAsync());
     }, [dispatch]);
 
     const toast = useToast();
@@ -71,9 +79,10 @@ function Order() {
     const deleteProductInOrder = (productId: number) => {
         dispatch(remove(productId));
     };
+
     // Payment
     const [pay, setPay] = useState(false);
-    const { register, handleSubmit, watch } = useForm({
+    const { register, handleSubmit, watch, reset, formState } = useForm({
         defaultValues: {
             discount: '',
             discount_reason: '',
@@ -85,7 +94,11 @@ function Order() {
             voucher: '',
         },
     });
-
+    useEffect(() => {
+        if (formState.isSubmitSuccessful) {
+            reset({}, { keepDefaultValues: true });
+        }
+    }, [formState, reset]);
     let tempTotal: number | undefined = 0;
 
     if (productsOrder.length > 0) {
@@ -127,8 +140,8 @@ function Order() {
 
     return (
         <div className="bg-[#e8eaf2]">
-            <div className="container">
-                <div className="grid grid-cols-12 gap-4 pt-10">
+            <div className="container py-20">
+                <div className="grid grid-cols-12 gap-4">
                     <div className="hidden lg:block col-span-2">
                         <ul className="text-lg font-normal text-center space-y-4">
                             <li
@@ -278,9 +291,35 @@ function Order() {
                                     </span>
                                 </div>
                                 {productsOrder.length !== 0 ? (
-                                    <div className="flex justify-end">
+                                    <div className="flex justify-between">
+                                        <select
+                                            onChange={(e) => {
+                                                dispatch(table(+e.target.value));
+                                            }}
+                                            className="p-2 rounded-lg bg-[#ff8106] text-white outline-none"
+                                        >
+                                            <option hidden>Chọn Bàn</option>
+                                            {tableAvailable.map((tab, index) => (
+                                                <option key={index} value={tab.id}>
+                                                    Bàn {tab.id}
+                                                </option>
+                                            ))}
+                                        </select>
                                         <button
-                                            onClick={onPaymentOpen}
+                                            onClick={() => {
+                                                if (tableId === 0) {
+                                                    toast({
+                                                        title: 'warning',
+                                                        description: 'Vui lòng chọn bàn',
+                                                        status: 'warning',
+                                                        position: 'top-right',
+                                                        duration: 3000,
+                                                        isClosable: true,
+                                                    });
+                                                } else {
+                                                    onPaymentOpen();
+                                                }
+                                            }}
                                             className="p-2 rounded-lg bg-blue-600 text-white text-base"
                                         >
                                             Thanh toán
@@ -308,12 +347,13 @@ function Order() {
                                 user_id: 1,
                                 client: 'Nhi',
                                 total: tempTotal! - discountValue! + surchargeValue! + taxValue!,
-                                table_id: 1,
+                                table_id: tableId,
                                 ...data,
                             }),
                         );
                         result
                             .then((res) => {
+                                dispatch(removeTable(tableId));
                                 const id = res.payload.id;
                                 if (res.payload.success) {
                                     productsOrder.forEach((product: ProductProps, index: number) => {

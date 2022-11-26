@@ -13,11 +13,13 @@ export interface OrderProps {
 
 export interface OrderState {
     value: Array<OrderProps>;
+    payment_mobile: boolean;
     status: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: OrderState = {
     value: [],
+    payment_mobile: false,
     status: 'idle',
 };
 
@@ -50,6 +52,9 @@ export const orderSlice = createSlice({
         empty: (state) => {
             state.value = [];
         },
+        payment_mobile: (state) => {
+            state.payment_mobile = !state.payment_mobile;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -74,8 +79,9 @@ export const orderSlice = createSlice({
     },
 });
 
-export const { insert, update, remove, empty } = orderSlice.actions;
+export const { insert, update, remove, empty, payment_mobile } = orderSlice.actions;
 
 export const getProductsOrder = (state: RootState) => state.order.value;
+export const getPaymentMobile = (state: RootState) => state.order.payment_mobile;
 
 export default orderSlice.reducer;

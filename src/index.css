@@ -14,3 +14,7 @@
 .input-search {
     @apply block w-full py-3 px-4 text-base outline-none bg-slate-100 shadow-none;
 }
+
+.payment-mobile {
+    @apply !block fixed inset-0 bottom-20;
+}

@@ -17,8 +17,10 @@ import {
     empty,
     createOrderAsync,
     createOrderDetailAsync,
+    getPaymentMobile,
+    payment_mobile,
 } from '~/features/order/orderSlice';
-import { DeleteIcon, SearchIcon, ToDoListIcon } from '~/components/Icons';
+import { CloseIcon, DeleteIcon, SearchIcon, ToDoListIcon } from '~/components/Icons';
 import {
     useDisclosure,
     Modal,
@@ -121,6 +123,8 @@ function Order() {
         }
     };
 
+    const payment_mobile_status = useAppSelector(getPaymentMobile);
+
     return (
         <div>
             <div className="container">
@@ -202,10 +206,27 @@ function Order() {
                             ))}
                         </div>
                     </div>
-                    <div className="hidden md:block md:col-span-5 lg:col-span-4 bg-white rounded-lg p-4">
+                    <div
+                        className={`${
+                            payment_mobile_status ? 'payment-mobile' : ''
+                        } hidden md:block md:col-span-5 lg:col-span-4 bg-white rounded-lg p-4`}
+                    >
                         <div className="flex flex-col justify-between h-full">
                             <div className="space-y-4">
-                                <h6 className="text-2xl font-normal">Thanh toán</h6>
+                                <h6 className="text-2xl font-normal relative">
+                                    Thanh toán
+                                    {payment_mobile_status ? (
+                                        <span onClick={() => dispatch(payment_mobile())} className="cursor-pointer">
+                                            <CloseIcon
+                                                width={16}
+                                                height={16}
+                                                className="absolute top-1/2 -translate-y-1/2 right-2"
+                                            />
+                                        </span>
+                                    ) : (
+                                        <></>
+                                    )}
+                                </h6>
                                 {productsOrder.length !== 0 ? (
                                     <div className="space-y-4">
                                         {productsOrder.map((item, index) => (
@@ -273,7 +294,12 @@ function Order() {
             </div>
 
             {/* Payment Modal */}
-            <Modal isOpen={isPaymentOpen} onClose={onPaymentClose} scrollBehavior={'inside'}>
+            <Modal
+                size={`${payment_mobile_status ? 'full' : 'lg'}`}
+                isOpen={isPaymentOpen}
+                onClose={onPaymentClose}
+                scrollBehavior={'inside'}
+            >
                 <ModalOverlay />
                 <form
                     onSubmit={handleSubmit((data) => {

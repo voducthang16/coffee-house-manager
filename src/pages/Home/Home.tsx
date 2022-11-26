@@ -24,7 +24,10 @@ function Home() {
                     </Link>
                 </div>
                 <div className="col-span-3">
-                    <Link to={'/'} className="p-4 rounded-lg flex flex-col items-center justify-center bg-[#eeedef]">
+                    <Link
+                        to={'/table'}
+                        className="p-4 rounded-lg flex flex-col items-center justify-center bg-[#eeedef]"
+                    >
                         <div className="p-5 rounded-full bg-[#f85961]">
                             <RestaurantIcon width={48} height={48} className={'fill-white'} />
                         </div>

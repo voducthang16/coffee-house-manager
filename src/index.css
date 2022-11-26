@@ -18,3 +18,11 @@
 .payment-mobile {
     @apply !block fixed inset-0 bottom-20;
 }
+
+.floor {
+    @apply p-2 rounded-lg border border-slate-200 cursor-pointer font-normal transition-all duration-300;
+}
+
+.floor.active {
+    @apply bg-[#ff7b24] text-white border-[#ff7b24] transition-all duration-300;
+}

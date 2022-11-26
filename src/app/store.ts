@@ -3,12 +3,14 @@ import counterReducer from '../features/counter/counterSlice';
 import productReducer from '~/features/product/productSlice';
 import orderReducer from '~/features/order/orderSlice';
 import categoryReducer from '~/features/category/categorySlice';
+import tableReducer from '~/features/table/tableSlice';
 export const store = configureStore({
     reducer: {
         counter: counterReducer,
         order: orderReducer,
         category: categoryReducer,
         product: productReducer,
+        table: tableReducer,
     },
 });
 

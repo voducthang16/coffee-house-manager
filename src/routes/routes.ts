@@ -5,6 +5,7 @@ import Register from '~/pages/Register';
 // Pages
 import Home from '~/pages/Home';
 import Cashier from '~/pages/Cashier';
+import Table from '~/pages/Table';
 interface Routes {
     path: string;
     Component: React.ComponentType;
@@ -26,6 +27,10 @@ const publicRoutes: Routes[] = [
     {
         path: '/cashier',
         Component: Cashier,
+    },
+    {
+        path: '/table',
+        Component: Table,
     },
     {
         path: '/login',

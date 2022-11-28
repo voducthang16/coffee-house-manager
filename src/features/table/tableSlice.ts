@@ -5,6 +5,7 @@ import { fetchTable, fetchTableAvailable } from './tableAPI';
 export interface TableProps {
     id: number;
     floor: number;
+    type: number;
     status: number;
 }
 

@@ -14,7 +14,7 @@ function Home() {
                 </div>
                 <div className="col-span-3">
                     <Link
-                        to={'/cashier'}
+                        to={'/order'}
                         className="p-4 rounded-lg flex flex-col items-center justify-center bg-[#eeedef]"
                     >
                         <div className="p-5 rounded-full bg-[#078646]">

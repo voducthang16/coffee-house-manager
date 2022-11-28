@@ -4,7 +4,7 @@ import Login from '~/pages/Login';
 import Register from '~/pages/Register';
 // Pages
 import Home from '~/pages/Home';
-import Cashier from '~/pages/Cashier';
+import Order from '~/pages/Order';
 import Table from '~/pages/Table';
 interface Routes {
     path: string;
@@ -25,8 +25,8 @@ const publicRoutes: Routes[] = [
         Component: Home,
     },
     {
-        path: '/cashier',
-        Component: Cashier,
+        path: '/order',
+        Component: Order,
     },
     {
         path: '/table',

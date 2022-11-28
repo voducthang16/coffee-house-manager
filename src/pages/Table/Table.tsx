@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '~/app/hooks';
 import { fetchTableAsync, getTables } from '~/features/table/tableSlice';
+import { table } from '~/features/order/orderSlice';
+import { useNavigate } from 'react-router-dom';
 
 function Table() {
     const [status, setStatus] = useState(1);
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const table = useAppSelector(getTables);
+    const tables = useAppSelector(getTables);
     useEffect(() => {
         dispatch(fetchTableAsync(status));
     }, [dispatch, status]);
@@ -44,9 +47,15 @@ function Table() {
                     </ul>
                 </div>
                 <div className="grid grid-cols-5 gap-5">
-                    {table.map((item, index) => (
+                    {tables.map((item, index) => (
                         <div key={index} className="col-span-1">
                             <div
+                                onClick={() => {
+                                    if (item.type === 1) {
+                                        navigate('/order');
+                                        dispatch(table(item.id));
+                                    }
+                                }}
                                 className={`border ${
                                     item.status === 0 ? 'border-slate-300' : 'border-[#28a745]'
                                 } rounded-lg overflow-hidden cursor-pointer`}

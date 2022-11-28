@@ -293,12 +293,15 @@ function Order() {
                                 {productsOrder.length !== 0 ? (
                                     <div className="flex justify-between">
                                         <select
+                                            value={tableId ? tableId : 0}
                                             onChange={(e) => {
                                                 dispatch(table(+e.target.value));
                                             }}
                                             className="p-2 rounded-lg bg-[#ff8106] text-white outline-none"
                                         >
-                                            <option hidden>Chọn Bàn</option>
+                                            <option value={0} hidden>
+                                                Chọn Bàn
+                                            </option>
                                             {tableAvailable.map((tab, index) => (
                                                 <option key={index} value={tab.id}>
                                                     Bàn {tab.id}

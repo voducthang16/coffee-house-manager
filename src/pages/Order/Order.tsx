@@ -21,6 +21,7 @@ import {
     payment_mobile,
     table,
     getTable,
+    getOrderType,
 } from '~/features/order/orderSlice';
 import { CloseIcon, DeleteIcon, SearchIcon, ToDoListIcon } from '~/components/Icons';
 import {
@@ -47,6 +48,7 @@ function Order() {
     const category = useAppSelector(getCategory);
     const tableAvailable = useAppSelector(getTablesAvailable);
     const productsOrder = useAppSelector(getProductsOrder);
+    const orderType = useAppSelector(getOrderType);
     useEffect(() => {
         dispatch(fetchProductAsync());
     }, [dispatch]);
@@ -310,18 +312,18 @@ function Order() {
                                         </select>
                                         <button
                                             onClick={() => {
-                                                if (tableId === 0) {
-                                                    toast({
-                                                        title: 'warning',
-                                                        description: 'Vui lòng chọn bàn',
-                                                        status: 'warning',
-                                                        position: 'top-right',
-                                                        duration: 3000,
-                                                        isClosable: true,
-                                                    });
-                                                } else {
-                                                    onPaymentOpen();
-                                                }
+                                                // if (tableId === 0) {
+                                                //     toast({
+                                                //         title: 'warning',
+                                                //         description: 'Vui lòng chọn bàn',
+                                                //         status: 'warning',
+                                                //         position: 'top-right',
+                                                //         duration: 3000,
+                                                //         isClosable: true,
+                                                //     });
+                                                // } else {
+                                                onPaymentOpen();
+                                                // }
                                             }}
                                             className="p-2 rounded-lg bg-blue-600 text-white text-base"
                                         >
@@ -345,45 +347,47 @@ function Order() {
                 <ModalOverlay />
                 <form
                     onSubmit={handleSubmit((data) => {
-                        const result = dispatch(
-                            createOrderAsync({
-                                user_id: 1,
-                                client: 'Nhi',
-                                total: tempTotal! - discountValue! + surchargeValue! + taxValue!,
-                                table_id: tableId,
-                                ...data,
-                            }),
-                        );
-                        result
-                            .then((res) => {
-                                dispatch(removeTable(tableId));
-                                const id = res.payload.id;
-                                if (res.payload.success) {
-                                    productsOrder.forEach((product: ProductProps, index: number) => {
-                                        dispatch(
-                                            createOrderDetailAsync({
-                                                order_id: id,
-                                                product_id: product.id,
-                                                quantity: product.quantity,
-                                                total: product.price,
-                                            }),
-                                        );
-                                        if (index === productsOrder.length - 1) {
-                                            dispatch(empty());
-                                            toast({
-                                                title: 'success',
-                                                description: 'Thanh toán đơn hàng thành công',
-                                                status: 'success',
-                                                position: 'top-right',
-                                                duration: 3000,
-                                                isClosable: true,
-                                            });
-                                            onPaymentClose();
-                                        }
-                                    });
-                                }
-                            })
-                            .catch((err) => console.log(err));
+                        if (orderType === 0) {
+                            const result = dispatch(
+                                createOrderAsync({
+                                    user_id: 1,
+                                    client: 'Nhi',
+                                    total: tempTotal! - discountValue! + surchargeValue! + taxValue!,
+                                    ...data,
+                                }),
+                            );
+                            result
+                                .then((res) => {
+                                    const id = res.payload.id;
+                                    if (res.payload.success) {
+                                        productsOrder.forEach((product: ProductProps, index: number) => {
+                                            dispatch(
+                                                createOrderDetailAsync({
+                                                    order_id: id,
+                                                    product_id: product.id,
+                                                    quantity: product.quantity,
+                                                    total: product.price,
+                                                }),
+                                            );
+                                            if (index === productsOrder.length - 1) {
+                                                dispatch(empty());
+                                                toast({
+                                                    title: 'success',
+                                                    description: 'Thanh toán đơn hàng thành công',
+                                                    status: 'success',
+                                                    position: 'top-right',
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                });
+                                                onPaymentClose();
+                                            }
+                                        });
+                                    }
+                                })
+                                .catch((err) => console.log(err));
+                        } else {
+                            alert('Luu tam vao DB');
+                        }
                     })}
                 >
                     <ModalContent>

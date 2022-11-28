@@ -15,6 +15,7 @@ export interface OrderState {
     value: Array<OrderProps>;
     payment_mobile: boolean;
     table: number;
+    type: number;
     status: 'idle' | 'loading' | 'failed';
 }
 
@@ -22,6 +23,7 @@ const initialState: OrderState = {
     value: [],
     payment_mobile: false,
     table: 0,
+    type: 0,
     status: 'idle',
 };
 
@@ -60,6 +62,9 @@ export const orderSlice = createSlice({
         table: (state, { payload }: PayloadAction<number>) => {
             state.table = payload;
         },
+        order_type: (state, { payload }: PayloadAction<number>) => {
+            state.type = payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -84,10 +89,11 @@ export const orderSlice = createSlice({
     },
 });
 
-export const { insert, update, remove, empty, payment_mobile, table } = orderSlice.actions;
+export const { insert, update, remove, empty, payment_mobile, table, order_type } = orderSlice.actions;
 
 export const getProductsOrder = (state: RootState) => state.order.value;
 export const getPaymentMobile = (state: RootState) => state.order.payment_mobile;
 export const getTable = (state: RootState) => state.order.table;
+export const getOrderType = (state: RootState) => state.order.type;
 
 export default orderSlice.reducer;

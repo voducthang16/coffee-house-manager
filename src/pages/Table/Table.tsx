@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '~/app/hooks';
 import { fetchTableAsync, getTables } from '~/features/table/tableSlice';
-import { table } from '~/features/order/orderSlice';
+import { order_type, table } from '~/features/order/orderSlice';
 import { useNavigate } from 'react-router-dom';
 
 function Table() {
@@ -54,6 +54,7 @@ function Table() {
                                     if (item.type === 1) {
                                         navigate('/order');
                                         dispatch(table(item.id));
+                                        dispatch(order_type(1));
                                     }
                                 }}
                                 className={`border ${

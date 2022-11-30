@@ -49,6 +49,7 @@ function Order() {
     const tableAvailable = useAppSelector(getTablesAvailable);
     const productsOrder = useAppSelector(getProductsOrder);
     const orderType = useAppSelector(getOrderType);
+    console.log(orderType);
     useEffect(() => {
         dispatch(fetchProductAsync());
     }, [dispatch]);
@@ -293,23 +294,26 @@ function Order() {
                                     </span>
                                 </div>
                                 {productsOrder.length !== 0 ? (
-                                    <div className="flex justify-between">
-                                        <select
-                                            value={tableId ? tableId : 0}
-                                            onChange={(e) => {
-                                                dispatch(table(+e.target.value));
-                                            }}
-                                            className="p-2 rounded-lg bg-[#ff8106] text-white outline-none"
-                                        >
-                                            <option value={0} hidden>
-                                                Chọn Bàn
-                                            </option>
-                                            {tableAvailable.map((tab, index) => (
-                                                <option key={index} value={tab.id}>
-                                                    Bàn {tab.id}
+                                    <div className={`flex ${orderType === 1 ? 'justify-between' : 'justify-end'}`}>
+                                        {orderType === 1 && (
+                                            <select
+                                                value={tableId ? tableId : 0}
+                                                onChange={(e) => {
+                                                    dispatch(table(+e.target.value));
+                                                }}
+                                                className="p-2 rounded-lg bg-[#ff8106] text-white outline-none"
+                                            >
+                                                <option value={0} hidden>
+                                                    Chọn Bàn
                                                 </option>
-                                            ))}
-                                        </select>
+                                                {tableAvailable.map((tab, index) => (
+                                                    <option key={index} value={tab.id}>
+                                                        Bàn {tab.id}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        )}
+
                                         <button
                                             onClick={() => {
                                                 // if (tableId === 0) {

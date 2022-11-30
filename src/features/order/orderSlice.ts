@@ -9,20 +9,25 @@ export interface OrderProps {
     price: number;
     status: number;
     quantity?: number;
+    tableId?: number;
 }
 
 export interface OrderState {
     value: Array<OrderProps>;
+    temp: Array<OrderProps>;
     payment_mobile: boolean;
-    table: number;
+    tableId: number;
     type: number;
     status: 'idle' | 'loading' | 'failed';
 }
 
+// type = 0 -> tai quay, 1 -> tai ban
+
 const initialState: OrderState = {
     value: [],
+    temp: [],
     payment_mobile: false,
-    table: 0,
+    tableId: 0,
     type: 0,
     status: 'idle',
 };
@@ -44,6 +49,9 @@ export const orderSlice = createSlice({
         insert: (state, { payload }: PayloadAction<OrderProps>) => {
             state.value.push(payload);
         },
+        insert_temp: (state, { payload }: PayloadAction<OrderProps>) => {
+            state.temp.push(payload);
+        },
         update: (state, { payload }: PayloadAction<OrderProps>) => {
             const newArray = state.value.map((item: OrderProps) => (item.id === payload.id ? payload : item));
             state.value = newArray;
@@ -59,10 +67,11 @@ export const orderSlice = createSlice({
         payment_mobile: (state) => {
             state.payment_mobile = !state.payment_mobile;
         },
-        table: (state, { payload }: PayloadAction<number>) => {
-            state.table = payload;
+        setTableId: (state, { payload }: PayloadAction<number>) => {
+            state.tableId = payload;
         },
-        order_type: (state, { payload }: PayloadAction<number>) => {
+        setOrderType: (state, { payload }: PayloadAction<number>) => {
+            state.value = [];
             state.type = payload;
         },
     },
@@ -89,11 +98,13 @@ export const orderSlice = createSlice({
     },
 });
 
-export const { insert, update, remove, empty, payment_mobile, table, order_type } = orderSlice.actions;
+export const { insert, update, remove, empty, payment_mobile, setTableId, setOrderType, insert_temp } =
+    orderSlice.actions;
 
 export const getProductsOrder = (state: RootState) => state.order.value;
+export const getProductsTemp = (state: RootState) => state.order.temp;
 export const getPaymentMobile = (state: RootState) => state.order.payment_mobile;
-export const getTable = (state: RootState) => state.order.table;
+export const getTableId = (state: RootState) => state.order.tableId;
 export const getOrderType = (state: RootState) => state.order.type;
 
 export default orderSlice.reducer;

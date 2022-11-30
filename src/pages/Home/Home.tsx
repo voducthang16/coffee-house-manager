@@ -1,6 +1,10 @@
 import { CashierIcon, DashboardIcon, InvoiceIcon, RestaurantIcon } from '~/components/Icons';
 import { Link } from 'react-router-dom';
+import { useAppDispatch } from '~/app/hooks';
+import { setOrderType, setTableId } from '~/features/order/orderSlice';
+
 function Home() {
+    const dispatch = useAppDispatch();
     return (
         <div className="container bg-white py-10 mt-10">
             <div className="grid grid-cols-12 gap-4">
@@ -15,6 +19,10 @@ function Home() {
                 <div className="col-span-3">
                     <Link
                         to={'/order'}
+                        onClick={() => {
+                            dispatch(setOrderType(0));
+                            // dispatch(setTableId(0));
+                        }}
                         className="p-4 rounded-lg flex flex-col items-center justify-center bg-[#eeedef]"
                     >
                         <div className="p-5 rounded-full bg-[#078646]">

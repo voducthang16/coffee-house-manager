@@ -19,9 +19,11 @@ import {
     createOrderDetailAsync,
     getPaymentMobile,
     payment_mobile,
-    table,
-    getTable,
+    setTableId,
+    getTableId,
     getOrderType,
+    insert_temp,
+    getProductsTemp,
 } from '~/features/order/orderSlice';
 import { CloseIcon, DeleteIcon, SearchIcon, ToDoListIcon } from '~/components/Icons';
 import {
@@ -44,12 +46,12 @@ function Order() {
     const { isOpen: isPaymentOpen, onOpen: onPaymentOpen, onClose: onPaymentClose } = useDisclosure();
     const dispatch = useAppDispatch();
     const products = useAppSelector(getProducts);
-    const tableId = useAppSelector(getTable);
+    const productsTemp = useAppSelector(getProductsTemp);
+    const tableId = useAppSelector(getTableId);
     const category = useAppSelector(getCategory);
     const tableAvailable = useAppSelector(getTablesAvailable);
     const productsOrder = useAppSelector(getProductsOrder);
     const orderType = useAppSelector(getOrderType);
-    console.log(orderType);
     useEffect(() => {
         dispatch(fetchProductAsync());
     }, [dispatch]);
@@ -59,7 +61,9 @@ function Order() {
     useEffect(() => {
         dispatch(fetchTableAvailableAsync());
     }, [dispatch]);
-
+    useEffect(() => {
+        dispatch(empty());
+    }, [dispatch]);
     const toast = useToast();
 
     const addProductToOrder = (productId: number) => {
@@ -75,7 +79,15 @@ function Order() {
             };
             dispatch(update(updateQuantity));
         } else {
-            dispatch(insert(product));
+            if (orderType === 1) {
+                const productTemp = {
+                    tableId: tableId,
+                    ...product,
+                };
+                dispatch(insert_temp(productTemp));
+            } else {
+                dispatch(insert(product));
+            }
         }
     };
 
@@ -299,7 +311,7 @@ function Order() {
                                             <select
                                                 value={tableId ? tableId : 0}
                                                 onChange={(e) => {
-                                                    dispatch(table(+e.target.value));
+                                                    dispatch(setTableId(+e.target.value));
                                                 }}
                                                 className="p-2 rounded-lg bg-[#ff8106] text-white outline-none"
                                             >
@@ -316,18 +328,7 @@ function Order() {
 
                                         <button
                                             onClick={() => {
-                                                // if (tableId === 0) {
-                                                //     toast({
-                                                //         title: 'warning',
-                                                //         description: 'Vui lòng chọn bàn',
-                                                //         status: 'warning',
-                                                //         position: 'top-right',
-                                                //         duration: 3000,
-                                                //         isClosable: true,
-                                                //     });
-                                                // } else {
                                                 onPaymentOpen();
-                                                // }
                                             }}
                                             className="p-2 rounded-lg bg-blue-600 text-white text-base"
                                         >

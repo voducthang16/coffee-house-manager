@@ -56,10 +56,23 @@ export const orderSlice = createSlice({
             const newArray = state.value.map((item: OrderProps) => (item.id === payload.id ? payload : item));
             state.value = newArray;
         },
+        update_temp: (state, { payload }: PayloadAction<OrderProps>) => {
+            const newArray = state.temp.map((item: OrderProps) =>
+                item.id === payload.id && item.tableId === state.tableId ? payload : item,
+            );
+            state.temp = newArray;
+        },
         remove: (state, { payload }: PayloadAction<number>) => {
             const removeProduct = state.value.find((item: OrderProps) => item.id === payload) as OrderProps;
             const index = state.value.indexOf(removeProduct);
             state.value.splice(index, 1);
+        },
+        remove_temp: (state, { payload }: PayloadAction<number>) => {
+            const removeProduct = state.temp.find(
+                (item: OrderProps) => item.id === payload && item.tableId === state.tableId,
+            ) as OrderProps;
+            const index = state.temp.indexOf(removeProduct);
+            state.temp.splice(index, 1);
         },
         empty: (state) => {
             state.value = [];
@@ -98,8 +111,18 @@ export const orderSlice = createSlice({
     },
 });
 
-export const { insert, update, remove, empty, payment_mobile, setTableId, setOrderType, insert_temp } =
-    orderSlice.actions;
+export const {
+    insert,
+    update,
+    remove,
+    empty,
+    payment_mobile,
+    setTableId,
+    setOrderType,
+    insert_temp,
+    update_temp,
+    remove_temp,
+} = orderSlice.actions;
 
 export const getProductsOrder = (state: RootState) => state.order.value;
 export const getProductsTemp = (state: RootState) => state.order.temp;

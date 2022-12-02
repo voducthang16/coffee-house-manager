@@ -7,24 +7,29 @@ import {
     OrderProps,
     payment_mobile,
     remove,
+    remove_temp,
     setTableId,
 } from '~/features/order/orderSlice';
 import { getTablesAvailable } from '~/features/table/tableSlice';
 import PaymentModal from './PaymentModal';
-
 interface PaymentProps {
     listProducts: Array<OrderProps>;
 }
 
 function Payment({ listProducts }: PaymentProps) {
     const dispatch = useAppDispatch();
+    const listProductsById: Array<OrderProps> = [];
 
     // payment mobile status
     const payment_mobile_status = useAppSelector(getPaymentMobile);
 
     // delete product in order
     const deleteProductInOrder = (productId: number) => {
-        dispatch(remove(productId));
+        if (orderType === 1) {
+            dispatch(remove_temp(productId));
+        } else {
+            dispatch(remove(productId));
+        }
     };
 
     // order type
@@ -35,8 +40,6 @@ function Payment({ listProducts }: PaymentProps) {
 
     // table available
     const tableAvailable = useAppSelector(getTablesAvailable);
-
-    // modal
 
     return (
         <div

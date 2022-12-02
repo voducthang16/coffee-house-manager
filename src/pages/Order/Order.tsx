@@ -16,6 +16,7 @@ import {
     getTableId,
     getOrderType,
     insert_temp,
+    update_temp,
     getProductsTemp,
 } from '~/features/order/orderSlice';
 import { SearchIcon } from '~/components/Icons';
@@ -32,7 +33,7 @@ function Order() {
 
     // list product order at table
     const productsTemp = useAppSelector(getProductsTemp);
-
+    const [productT, setProductT] = useState(Array<OrderProps>);
     // id table for order | order at table
     const tableId = useAppSelector(getTableId);
 
@@ -50,11 +51,25 @@ function Order() {
     useEffect(() => {
         dispatch(fetchTableAvailableAsync());
     }, [dispatch]);
-
-    const addProductToOrder = (productId: number) => {
+    // get products by table
+    useEffect(() => {
+        const newArray = productsTemp.filter((item) => {
+            return item.tableId === tableId;
+        });
+        setProductT(newArray);
+    }, [tableId, productsTemp]);
+    const addProductToOrder = (productId: number, listProducts: Array<OrderProps>) => {
         const findProduct = products.find((item: OrderProps) => item.id === productId) as OrderProps;
         const product = { quantity: 1, ...findProduct };
-        const existProduct = productsOrder.find((item: OrderProps) => item.id === productId);
+        let existProduct;
+        if (orderType === 1) {
+            const newArray = listProducts.filter((item) => {
+                return item.tableId === tableId;
+            });
+            existProduct = newArray.find((item: OrderProps) => item.id === productId);
+        } else {
+            existProduct = listProducts.find((item: OrderProps) => item.id === productId);
+        }
         if (existProduct) {
             const originalPrice = existProduct.price / existProduct.quantity!;
             const updateQuantity = {
@@ -62,7 +77,16 @@ function Order() {
                 quantity: existProduct.quantity! + 1,
                 price: originalPrice * (existProduct.quantity! + 1),
             };
-            dispatch(update(updateQuantity));
+
+            if (orderType === 1) {
+                const updateProductTempQuantity = {
+                    tableId: tableId,
+                    ...updateQuantity,
+                };
+                dispatch(update_temp(updateProductTempQuantity));
+            } else {
+                dispatch(update(updateQuantity));
+            }
         } else {
             if (orderType === 1) {
                 const productTemp = {
@@ -155,7 +179,9 @@ function Order() {
                             {products?.map((item: ProductProps, index) => (
                                 <div key={index} className="col-span-1">
                                     <div
-                                        onClick={() => addProductToOrder(item.id)}
+                                        onClick={() =>
+                                            addProductToOrder(item.id, orderType === 0 ? productsOrder : productsTemp)
+                                        }
                                         className="space-y-4 cursor-pointer"
                                     >
                                         <Image
@@ -170,7 +196,7 @@ function Order() {
                             ))}
                         </div>
                     </div>
-                    <Payment listProducts={orderType === 0 ? productsOrder : productsTemp} />
+                    <Payment listProducts={orderType === 0 ? productsOrder : productT} />
                 </div>
             </div>
         </div>

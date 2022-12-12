@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { createOrder, createOrderDetail } from './orderAPI';
+import { createOrder, createOrderDetail, changeTableStatus } from './orderAPI';
 
 export interface OrderProps {
     id: number;
@@ -42,6 +42,11 @@ export const createOrderDetailAsync = createAsyncThunk('order/create-detail', as
     return response.data;
 });
 
+export const changeTableStatusAsync = createAsyncThunk('table/update-status', async (item: any) => {
+    const response = await changeTableStatus(item);
+    return response.data;
+});
+
 export const orderSlice = createSlice({
     name: 'order',
     initialState,
@@ -77,6 +82,15 @@ export const orderSlice = createSlice({
         empty: (state) => {
             state.value = [];
         },
+        empty_temp: (state, { payload }: PayloadAction<number>) => {
+            const newArray: Array<OrderProps> = [];
+            state.temp.forEach((item: OrderProps) => {
+                if (item.tableId !== payload) {
+                    newArray.push(item);
+                }
+            });
+            state.temp = newArray;
+        },
         payment_mobile: (state) => {
             state.payment_mobile = !state.payment_mobile;
         },
@@ -107,6 +121,10 @@ export const orderSlice = createSlice({
             })
             .addCase(createOrderDetailAsync.rejected, (state) => {
                 state.status = 'failed';
+            })
+            .addCase(changeTableStatusAsync.fulfilled, (state, action) => {
+                console.log('update table status successfully');
+                // state.status = 'idle';
             });
     },
 });
@@ -122,6 +140,7 @@ export const {
     insert_temp,
     update_temp,
     remove_temp,
+    empty_temp,
 } = orderSlice.actions;
 
 export const getProductsOrder = (state: RootState) => state.order.value;

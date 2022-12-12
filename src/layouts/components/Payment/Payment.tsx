@@ -9,16 +9,18 @@ import {
     remove,
     remove_temp,
     setTableId,
+    changeTableStatusAsync,
 } from '~/features/order/orderSlice';
 import { getTablesAvailable } from '~/features/table/tableSlice';
 import PaymentModal from './PaymentModal';
+import { useNavigate } from 'react-router-dom';
 interface PaymentProps {
     listProducts: Array<OrderProps>;
 }
 
 function Payment({ listProducts }: PaymentProps) {
     const dispatch = useAppDispatch();
-    const listProductsById: Array<OrderProps> = [];
+    const navigate = useNavigate();
 
     // payment mobile status
     const payment_mobile_status = useAppSelector(getPaymentMobile);
@@ -133,11 +135,31 @@ function Payment({ listProducts }: PaymentProps) {
                                     ))}
                                 </select>
                             )}
-                            <PaymentModal
-                                listProducts={listProducts}
-                                orderType={orderType}
-                                payment_mobile_status={payment_mobile_status}
-                            />
+                            {orderType === 0 ? (
+                                <PaymentModal
+                                    listProducts={listProducts}
+                                    orderType={orderType}
+                                    payment_mobile_status={payment_mobile_status}
+                                />
+                            ) : (
+                                <div className="space-x-4">
+                                    <button
+                                        onClick={() => {
+                                            dispatch(changeTableStatusAsync({ tableId: tableId, status: 1 }));
+                                            navigate('/table');
+                                        }}
+                                        className="p-2 rounded-lg bg-green-500 text-white text-base"
+                                    >
+                                        Lưu
+                                    </button>
+                                    <PaymentModal
+                                        listProducts={listProducts}
+                                        orderType={orderType}
+                                        payment_mobile_status={payment_mobile_status}
+                                        tableId={tableId}
+                                    />
+                                </div>
+                            )}
                         </div>
                     ) : null}
                 </div>

@@ -11,3 +11,7 @@ export const createOrder = (data: any) => {
 export const createOrderDetail = (data: any) => {
     return axios.post('http://localhost:3001/orders/order-detail', data);
 };
+
+export const changeTableStatus = (data: any) => {
+    return axios.post(`http://localhost:3001/table/update-status`, data);
+};

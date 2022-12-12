@@ -10,21 +10,31 @@ import {
     useDisclosure,
     useToast,
 } from '@chakra-ui/react';
-import { createOrderAsync, createOrderDetailAsync, empty, OrderProps } from '~/features/order/orderSlice';
+import {
+    changeTableStatusAsync,
+    createOrderAsync,
+    createOrderDetailAsync,
+    empty,
+    empty_temp,
+    OrderProps,
+} from '~/features/order/orderSlice';
 import { ProductProps } from '~/features/product/productSlice';
 import { useAppDispatch } from '~/app/hooks';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface PaymentModalProps {
     listProducts: Array<OrderProps>;
     payment_mobile_status: boolean;
     orderType: number;
+    tableId?: number;
 }
 
-function PaymentModal({ listProducts, payment_mobile_status, orderType }: PaymentModalProps) {
+function PaymentModal({ listProducts, payment_mobile_status, orderType, tableId }: PaymentModalProps) {
     const dispatch = useAppDispatch();
     const toast = useToast();
+    const navigate = useNavigate();
 
     const { isOpen: isPaymentOpen, onOpen: onPaymentOpen, onClose: onPaymentClose } = useDisclosure();
 
@@ -79,7 +89,7 @@ function PaymentModal({ listProducts, payment_mobile_status, orderType }: Paymen
                 }}
                 className="p-2 rounded-lg bg-blue-600 text-white text-base"
             >
-                {orderType === 0 ? 'Thanh toán' : 'Lưu'}
+                Thanh toán
             </button>
             <Modal
                 size={`${payment_mobile_status ? 'full' : 'lg'}`}
@@ -95,47 +105,51 @@ function PaymentModal({ listProducts, payment_mobile_status, orderType }: Paymen
                             discount: data.discount === '' ? 0 : data.discount,
                             surcharge: data.surcharge === '' ? 0 : data.surcharge,
                         };
-                        if (orderType === 0) {
-                            const result = dispatch(
-                                createOrderAsync({
-                                    user_id: 1,
-                                    client: 'Nhi',
-                                    total: tempTotal! - discountValue! + surchargeValue! + taxValue!,
-                                    ...dataSend,
-                                }),
-                            );
-                            result
-                                .then((res) => {
-                                    const id = res.payload.id;
-                                    if (res.payload.success) {
-                                        listProducts.forEach((product: ProductProps, index: number) => {
-                                            dispatch(
-                                                createOrderDetailAsync({
-                                                    order_id: id,
-                                                    product_id: product.id,
-                                                    quantity: product.quantity,
-                                                    total: product.price,
-                                                }),
-                                            );
-                                            if (index === listProducts.length - 1) {
+                        const result = dispatch(
+                            createOrderAsync({
+                                user_id: 1,
+                                client: 'Nhi',
+                                total: tempTotal! - discountValue! + surchargeValue! + taxValue!,
+                                ...dataSend,
+                            }),
+                        );
+                        result
+                            .then((res) => {
+                                const id = res.payload.id;
+                                if (res.payload.success) {
+                                    listProducts.forEach((product: ProductProps, index: number) => {
+                                        dispatch(
+                                            createOrderDetailAsync({
+                                                order_id: id,
+                                                product_id: product.id,
+                                                quantity: product.quantity,
+                                                total: product.price,
+                                            }),
+                                        );
+                                        if (index === listProducts.length - 1) {
+                                            if (orderType === 0) {
                                                 dispatch(empty());
-                                                toast({
-                                                    title: 'success',
-                                                    description: 'Thanh toán đơn hàng thành công',
-                                                    status: 'success',
-                                                    position: 'top-right',
-                                                    duration: 3000,
-                                                    isClosable: true,
-                                                });
-                                                onPaymentClose();
+                                            } else {
+                                                dispatch(empty_temp(tableId!));
+                                                dispatch(changeTableStatusAsync({ tableId: tableId!, status: 0 }));
                                             }
-                                        });
-                                    }
-                                })
-                                .catch((err) => console.log(err));
-                        } else {
-                            alert('Luu tam vao DB');
-                        }
+                                            toast({
+                                                title: 'success',
+                                                description: 'Thanh toán đơn hàng thành công',
+                                                status: 'success',
+                                                position: 'top-right',
+                                                duration: 3000,
+                                                isClosable: true,
+                                            });
+                                            setTimeout(() => {
+                                                navigate('/');
+                                            }, 3000);
+                                            onPaymentClose();
+                                        }
+                                    });
+                                }
+                            })
+                            .catch((err) => console.log(err));
                     })}
                 >
                     <ModalContent>

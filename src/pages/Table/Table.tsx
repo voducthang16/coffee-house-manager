@@ -51,11 +51,11 @@ function Table() {
                         <div key={index} className="col-span-1">
                             <div
                                 onClick={() => {
-                                    if (item.type === 1) {
-                                        navigate('/order');
-                                        dispatch(setTableId(item.id));
-                                        dispatch(setOrderType(1));
-                                    }
+                                    // if (item.type === 1) {
+                                    navigate('/order');
+                                    dispatch(setTableId(item.id));
+                                    dispatch(setOrderType(1));
+                                    // }
                                 }}
                                 className={`border ${
                                     item.status === 0 ? 'border-slate-300' : 'border-[#28a745]'

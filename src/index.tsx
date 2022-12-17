@@ -7,17 +7,20 @@ import './index.css';
 import GlobalStyles from './components/GlobalStyles';
 import { ChakraProvider } from '@chakra-ui/react';
 import { PersistGate } from 'redux-persist/integration/react';
+import { HelmetProvider } from 'react-helmet-async';
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
 root.render(
     <React.StrictMode>
-        <ChakraProvider>
-            <Provider store={store}>
-                <PersistGate loading={null} persistor={persistor}>
-                    <GlobalStyles Children={App} />
-                </PersistGate>
-            </Provider>
-        </ChakraProvider>
+        <HelmetProvider>
+            <ChakraProvider>
+                <Provider store={store}>
+                    <PersistGate loading={null} persistor={persistor}>
+                        <GlobalStyles Children={App} />
+                    </PersistGate>
+                </Provider>
+            </ChakraProvider>
+        </HelmetProvider>
     </React.StrictMode>,
 );

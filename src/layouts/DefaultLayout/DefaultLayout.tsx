@@ -1,4 +1,5 @@
 import BottomNavigator from '~/layouts/components/BottomNavigator';
+import Sidebar from '../components/Sidebar';
 
 interface DefaultLayoutProps {
     Children: React.ComponentType;
@@ -7,7 +8,8 @@ interface DefaultLayoutProps {
 function DefaultLayout({ Children }: DefaultLayoutProps) {
     return (
         <>
-            <main>
+            <Sidebar />
+            <main className={'ml-64'}>
                 <Children />
             </main>
             <BottomNavigator />

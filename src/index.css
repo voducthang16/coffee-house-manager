@@ -26,3 +26,9 @@
 .floor.active {
     @apply bg-[#ff7b24] text-white border-[#ff7b24] transition-all duration-300;
 }
+
+/* scroll */
+.aside-scroll:hover {
+    @apply transition-all duration-300;
+    overflow-y: overlay;
+}

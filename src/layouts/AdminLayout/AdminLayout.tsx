@@ -1,16 +1,16 @@
 import BottomNavigator from '~/layouts/components/BottomNavigator';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
-interface DefaultLayoutProps {
+interface AdminLayoutProps {
     Children: React.ComponentType;
 }
 
-function DefaultLayout({ Children }: DefaultLayoutProps) {
+function AdminLayout({ Children }: AdminLayoutProps) {
     return (
         <>
-            {/* <Sidebar /> */}
-            <main className="bg-[#f3f3f9]">
-                {/* <Header /> */}
+            <Sidebar />
+            <main className={'ml-64 bg-[#f3f3f9]'}>
+                <Header />
                 <Children />
             </main>
             <BottomNavigator />
@@ -18,4 +18,4 @@ function DefaultLayout({ Children }: DefaultLayoutProps) {
     );
 }
 
-export default DefaultLayout;
+export default AdminLayout;

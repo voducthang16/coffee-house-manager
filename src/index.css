@@ -32,3 +32,8 @@
     @apply transition-all duration-300;
     overflow-y: overlay;
 }
+
+/* Active Nav Link */
+.nav-link.active {
+    @apply text-gray-400;
+}

@@ -2,10 +2,12 @@
 import NotFound from '~/layouts/NotFound';
 import Login from '~/pages/Login';
 import Register from '~/pages/Register';
+import AdminLayout from '~/layouts/AdminLayout';
 // Pages
 import Home from '~/pages/Home';
 import Order from '~/pages/Order';
 import Table from '~/pages/Table';
+import Dashboard from '~/pages/Dashboard';
 interface Routes {
     path: string;
     Component: React.ComponentType;
@@ -31,6 +33,11 @@ const publicRoutes: Routes[] = [
     {
         path: '/table',
         Component: Table,
+    },
+    {
+        path: '/dashboard',
+        Component: Dashboard,
+        layout: AdminLayout,
     },
     {
         path: '/login',

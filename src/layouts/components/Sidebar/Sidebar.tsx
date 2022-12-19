@@ -2,8 +2,8 @@ import Image from '~/components/Image';
 import images from '~/assets/images';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Box } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import { CashierIcon, DashboardIcon, RestaurantIcon } from '~/components/Icons';
-import { NavLink } from 'react-router-dom';
+import { CashierIcon, DashboardIcon, HomeIcon, RestaurantIcon } from '~/components/Icons';
+import { Link, NavLink } from 'react-router-dom';
 import { useAppDispatch } from '~/app/hooks';
 function Sidebar() {
     const dispatch = useAppDispatch();
@@ -66,7 +66,14 @@ function Sidebar() {
             </div>
 
             {/* ===== Start Aside Footer ===== */}
-            <div className="flex-none aside-footer p-4 bg-slate-200 border-t border-[#00352b]">Footer</div>
+            <div className="flex-none aside-footer text-center text-base py-4 mx-4">
+                <Link
+                    className="flex justify-center items-center w-full py-3 text-white font-medium bg-info rounded-lg cursor-pointer"
+                    to={'/'}
+                >
+                    <HomeIcon className="mr-2 fill-white" width={18} height={18} /> Trở Về Trang Chủ
+                </Link>
+            </div>
             {/* ===== End Aside Footer ===== */}
         </aside>
     );

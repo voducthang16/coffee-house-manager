@@ -123,7 +123,7 @@ function Dashboard() {
             <Helmet>
                 <title>Báo Cáo Tổng Quan</title>
             </Helmet>
-            <div className="p-8">
+            <div className="p-6">
                 <div className="flex justify-between items-center">
                     <h4 className="text-lg">Báo Cáo Tổng Quan</h4>
                     <div>
@@ -141,7 +141,7 @@ function Dashboard() {
                         /> */}
                     </div>
                 </div>
-                <div className="mt-8 grid grid-cols-12 gap-8">
+                <div className="mt-6 grid grid-cols-12 gap-8">
                     {[1, 2, 3, 4].map((index) => (
                         <div key={index} className="col-span-3">
                             <div

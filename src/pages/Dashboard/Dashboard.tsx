@@ -4,8 +4,9 @@ import DatePicker, { ReactDatePickerProps, registerLocale } from 'react-datepick
 import vi from 'date-fns/locale/vi';
 import 'react-datepicker/dist/react-datepicker.css';
 import './Dashboard.scss';
-import { CalendarIcon } from '~/components/Icons';
+import { CalendarIcon, DollarIcon, PlusIcon, UpRightArrowIcon } from '~/components/Icons';
 import { addDays } from 'date-fns';
+import CountUp from 'react-countup';
 // interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 //     ref?: React.Ref<HTMLInputElement>;
 //   }
@@ -39,11 +40,6 @@ const DatePickerCustom = ({ onClick }: Props) => {
             console.log(start, end);
         }
     };
-    // if (endDate) {
-    //     maxDate = currentDate;
-    // } else {
-
-    // }
     const ExampleCustomInput = forwardRef(
         (
             {
@@ -125,7 +121,7 @@ function Dashboard() {
     return (
         <Fragment>
             <Helmet>
-                <title>Báo Cáo</title>
+                <title>Báo Cáo Tổng Quan</title>
             </Helmet>
             <div className="p-8">
                 <div className="flex justify-between items-center">
@@ -144,6 +140,34 @@ function Dashboard() {
                             selectsRange
                         /> */}
                     </div>
+                </div>
+                <div className="mt-8 grid grid-cols-12 gap-8">
+                    {[1, 2, 3, 4].map((index) => (
+                        <div key={index} className="col-span-3">
+                            <div
+                                className="p-4 bg-white shadow-input-date rounded-lg 
+                                translate-y-0 hover:-translate-y-1 shadow-hover transition-all duration-300"
+                            >
+                                <div className="flex justify-between">
+                                    <h6>Total Earnings</h6>
+                                    <div className="flex items-center">
+                                        <UpRightArrowIcon className="mr-2 fill-success" width={10} height={10} />
+                                        <PlusIcon className="mr-0.5 fill-success" width={10} height={10} />
+                                        <h6 className="text-success">16.24%</h6>
+                                    </div>
+                                </div>
+                                <h3 className="py-4 text-2xl font-semibold text-dark">
+                                    <CountUp end={123457} />
+                                </h3>
+                                <div className="flex justify-between items-center">
+                                    <p className="underline font-light text-sm text-link">View net earnings</p>
+                                    <div className="bg-success_rgba p-3 rounded-md">
+                                        <DollarIcon className="fill-success" width={18} height={18} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </Fragment>

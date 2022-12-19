@@ -50,7 +50,7 @@ const DatePickerCustom = ({ onClick }: Props) => {
         ) => (
             <div className="flex items-center">
                 <button
-                    className="h-10 min-w-[210px] px-4 py-2 bg-white rounded-l-lg shadow-input-date outline-none"
+                    className="h-10 min-w-[210px] px-4 py-2 bg-white rounded-l-lg shadow-box outline-none"
                     ref={ref}
                     onClick={onClick}
                 >
@@ -110,7 +110,7 @@ function Dashboard() {
     //     onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     // }) => (
     //     <div className="flex items-center">
-    //         <button className="h-10 px-4 py-2 bg-white rounded-l-lg shadow-input-date outline-none" onClick={onClick}>
+    //         <button className="h-10 px-4 py-2 bg-white rounded-l-lg shadow-box outline-none" onClick={onClick}>
     //             {value}
     //         </button>
     //         <div className="h-10 w-10 flex items-center justify-center bg-[#405189] rounded-r-lg">
@@ -145,7 +145,7 @@ function Dashboard() {
                     {[1, 2, 3, 4].map((index) => (
                         <div key={index} className="col-span-3">
                             <div
-                                className="p-4 bg-white shadow-input-date rounded-lg 
+                                className="p-4 bg-white shadow-box rounded-lg 
                                 translate-y-0 hover:-translate-y-1 shadow-hover transition-all duration-300"
                             >
                                 <div className="flex justify-between">

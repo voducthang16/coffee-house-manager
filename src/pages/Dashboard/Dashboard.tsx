@@ -19,6 +19,8 @@ import {
     Legend,
     ResponsiveContainer,
 } from 'recharts';
+import ApexCharts from 'apexcharts';
+import Chart from 'react-apexcharts';
 interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
     onClick(): void;
 }
@@ -79,67 +81,150 @@ const DatePickerCustom = ({ onClick }: Props) => {
     );
 };
 
+const LineColumnChart = () => {
+    const series = [
+        {
+            name: 'Doanh Thu',
+            type: 'column',
+            data: [28000, 30000, 32000, 35000, 38000, 41000, 44000, 37000, 36000, 31000, 33000, 34000],
+        },
+        {
+            name: 'Đơn Hàng',
+            type: 'line',
+            data: [230, 420, 350, 270, 430, 220, 170, 310, 220, 220, 120, 360],
+        },
+    ];
+    const options = {
+        // chart: {
+        //     height: 400,
+        // },
+        stroke: {
+            width: [0, 2],
+        },
+        // title: {
+        //     text: 'Traffic Sources',
+        // },
+        dataLabels: {
+            // enabled: true,
+            // enabledOnSeries: [1],
+        },
+        labels: [
+            '01 Jan 2001',
+            '02 Jan 2001',
+            '03 Jan 2001',
+            '04 Jan 2001',
+            '05 Jan 2001',
+            '06 Jan 2001',
+            '07 Jan 2001',
+            '08 Jan 2001',
+            '09 Jan 2001',
+            '10 Jan 2001',
+            '11 Jan 2001',
+            '12 Jan 2001',
+        ],
+        xaxis: {
+            // type: 'datetime',
+        },
+        yaxis: [
+            {
+                title: {
+                    text: '',
+                },
+            },
+            {
+                show: false,
+                opposite: true,
+                title: {
+                    text: '',
+                },
+            },
+        ],
+        grid: {
+            yaxis: {
+                lines: {
+                    show: false,
+                },
+            },
+        },
+        tooltip: {
+            y: {
+                formatter: function (value: any, { series, seriesIndex, dataPointIndex }: any) {
+                    if (value === series[0][dataPointIndex]) {
+                        return `${value}k`;
+                    }
+                    return value;
+                },
+            },
+        },
+    };
+    return (
+        <div>
+            <Chart options={options} type="line" series={series} width="100%" height="400px" />
+        </div>
+    );
+};
+
 function Dashboard() {
     const data = [
         {
             name: 'T1',
             orders: 300,
-            earnings: 1400,
+            earnings: 20,
         },
         {
             name: 'T2',
             orders: 350,
-            earnings: 1506,
+            earnings: 30,
         },
         {
             name: 'T3',
             orders: 450,
-            earnings: 989,
+            earnings: 40,
         },
         {
             name: 'T4',
             orders: 330,
-            earnings: 1228,
+            earnings: 25,
         },
         {
             name: 'T5',
             orders: 290,
-            earnings: 1100,
+            earnings: 28,
         },
         {
             name: 'T6',
             orders: 420,
-            earnings: 1700,
+            earnings: 35,
         },
         {
             name: 'T7',
             orders: 400,
-            earnings: 1700,
+            earnings: 38,
         },
         {
             name: 'T8',
             orders: 380,
-            earnings: 1700,
+            earnings: 42,
         },
         {
             name: 'T9',
             orders: 350,
-            earnings: 1700,
+            earnings: 36,
         },
         {
             name: 'T10',
             orders: 270,
-            earnings: 1700,
+            earnings: 31,
         },
         {
             name: 'T11',
             orders: 460,
-            earnings: 1700,
+            earnings: 37,
         },
         {
             name: 'T12',
             orders: 500,
-            earnings: 1700,
+            earnings: 38,
         },
     ];
 
@@ -179,7 +264,7 @@ function Dashboard() {
                         <DatePickerCustom onClick={() => {}} />
                     </div>
                 </div>
-                <div className="grid grid-cols-12 gap-8">
+                <div className="grid grid-cols-12 gap-6">
                     {[1, 2, 3, 4].map((index) => (
                         <div key={index} className="col-span-3">
                             <div
@@ -236,9 +321,8 @@ function Dashboard() {
                             <h6>Orders</h6>
                         </div>
                     </div>
-                    <div className="bg-[#8884d8]"></div>
-                    <div className="px-4 h-[300px]">
-                        <ResponsiveContainer width="100%">
+                    <div className="px-4">
+                        {/* <ResponsiveContainer width="100%">
                             <ComposedChart data={data}>
                                 <CartesianGrid stroke="#f5f5f5" />
                                 <XAxis dataKey="name" />
@@ -266,8 +350,31 @@ function Dashboard() {
                                 <Area type="monotone" dataKey="orders" fill="#ecedf3" stroke="rgb(64, 81, 137)" />
                                 <Bar dataKey="earnings" barSize={20} fill="rgba(10, 179, 156, 0.9)" />
                             </ComposedChart>
-                        </ResponsiveContainer>
+                        </ResponsiveContainer> */}
+                        <LineColumnChart />
                     </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                    <div className="col-span-1 bg-white shadow-box rounded-lg">
+                        <div className="p-4 flex justify-between items-center">
+                            <h4 className="text-lg font-medium">Sản phẩm bán chạy</h4>
+                            <div className="space-x-2 text-sm">
+                                <button
+                                    className="p-[6px] bg-button_bg hover:bg-info hover:text-white transition-all
+                                rounded-md outline-none cursor-pointer "
+                                >
+                                    ALL
+                                </button>
+                                <button
+                                    className="p-[6px] bg-info_rgba hover:bg-info hover:text-white transition-all
+                                rounded-md outline-none cursor-pointer"
+                                >
+                                    1M
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-span-1 bg-white shadow-box rounded-lg"></div>
                 </div>
             </div>
         </Fragment>

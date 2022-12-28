@@ -627,3 +627,24 @@ export const AdministratorIcon = ({ height, width, className }: IconsProps) => {
         </svg>
     );
 };
+
+export const CircleIcon = ({ height, width, className }: IconsProps) => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            width={width}
+            height={height}
+            className={className}
+            viewBox="0 0 512 512"
+            enableBackground="new 0 0 512 512"
+        >
+            <g>
+                <g>
+                    <circle cx="256" cy="256" r="256" />
+                </g>
+            </g>
+        </svg>
+    );
+};

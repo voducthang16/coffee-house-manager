@@ -16,6 +16,7 @@ module.exports = {
                 dark: '#212529',
                 dark_rgba: 'rgba(3, 37, 41, 0.18)',
                 link: '#405189',
+                button_bg: 'rgba(64, 81, 137, 0.1)',
                 // primary: '#319795',
                 // secondary: '#748ACC',
             },

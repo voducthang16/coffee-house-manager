@@ -8,6 +8,7 @@ import Home from '~/pages/Home';
 import Order from '~/pages/Order';
 import Table from '~/pages/Table';
 import Dashboard from '~/pages/Dashboard';
+import Product from '~/pages/Product';
 interface Routes {
     path: string;
     Component: React.ComponentType;
@@ -37,6 +38,11 @@ const publicRoutes: Routes[] = [
     {
         path: '/dashboard',
         Component: Dashboard,
+        layout: AdminLayout,
+    },
+    {
+        path: '/product',
+        Component: Product,
         layout: AdminLayout,
     },
     {

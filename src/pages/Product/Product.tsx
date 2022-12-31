@@ -12,27 +12,75 @@ import {
     ModalCloseButton,
     useDisclosure,
     Button,
+    useToast,
 } from '@chakra-ui/react';
 import { getCategory, fetchCategoryAsync } from '~/features/category/categorySlice';
 import { getProducts, fetchProductAsync } from '~/features/product/productSlice';
 import { useAppDispatch, useAppSelector } from '~/app/hooks';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import Image from '~/components/Image';
 function Product() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const dispatch = useAppDispatch();
     const products = useAppSelector(getProducts);
     const category = useAppSelector(getCategory);
+    const [image, setImage] = useState('');
+    const [selectValue, setSelectValue] = useState(1);
+    const url = 'http://localhost:3001/';
+    const toast = useToast();
     useEffect(() => {
         if (products.length === 0) {
             dispatch(fetchProductAsync());
         }
-    }, [dispatch]);
+    }, [dispatch, products.length]);
     useEffect(() => {
         if (category.length === 0) {
             dispatch(fetchCategoryAsync());
         }
-    }, [dispatch]);
+    }, [dispatch, category.length]);
+
+    const onAddSubmit = (e: any) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('image', image);
+        axios
+            .post(url + 'api/image', formData)
+            .then((res) => {
+                if (res.data.code === 200) {
+                    const name = document.querySelector('#name') as HTMLInputElement;
+                    const price = document.querySelector('#price') as HTMLInputElement;
+                    const description = document.querySelector('#description') as HTMLTextAreaElement;
+                    const status = document.querySelector('input[name="status"]:checked') as HTMLInputElement;
+                    const data = {
+                        name: name?.value,
+                        category_id: +selectValue,
+                        price: +price?.value,
+                        description: description?.value,
+                        image: res.data.img,
+                        status: +status?.value,
+                    };
+                    axios
+                        .post(url + 'products', data)
+                        .then((res) => {
+                            if (res.data) {
+                                toast({
+                                    title: 'success',
+                                    description: 'Tạo sản phẩm thành công',
+                                    status: 'success',
+                                    position: 'top-right',
+                                    duration: 3000,
+                                    isClosable: true,
+                                });
+                                onClose();
+                            }
+                        })
+                        .catch((err) => console.log(err));
+                }
+            })
+            .catch((err) => console.log(err));
+    };
+
     return (
         <Fragment>
             <Helmet>
@@ -158,7 +206,7 @@ function Product() {
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <form action="">
+                    <form onSubmit={onAddSubmit}>
                         <ModalHeader>Thêm Sản Phẩm</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody className="space-y-4">
@@ -169,6 +217,28 @@ function Product() {
                                     name="name"
                                     id="name"
                                     placeholder="Tên Sản Phẩm"
+                                />
+                            </div>
+                            <div>
+                                <select
+                                    value={selectValue}
+                                    onChange={(e: any) => setSelectValue(e.target.value)}
+                                    className="outline-none bg-slate-100 py-3 px-4 rounded-lg"
+                                >
+                                    {category?.map((item: any, index) => (
+                                        <option key={index} value={index + 1}>
+                                            {item.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <input
+                                    className="input-form"
+                                    type="text"
+                                    name="price"
+                                    id="price"
+                                    placeholder="Giá Sản Phẩm"
                                 />
                             </div>
                             <div>
@@ -184,7 +254,13 @@ function Product() {
                                 <label htmlFor="image" className="inline-block mb-4">
                                     Ảnh Sản Phẩm
                                 </label>
-                                <input className="block" type="file" name="image" id="image" />
+                                <input
+                                    onChange={(e: any) => setImage(e.target.files[0])}
+                                    className="block"
+                                    type="file"
+                                    name="image"
+                                    id="image"
+                                />
                             </div>
                             <div>
                                 <h6 className="mb-4">Trạng Thái Sản Phẩm</h6>
@@ -193,13 +269,13 @@ function Product() {
                                         <label htmlFor="active" className="inline-block mr-1">
                                             Active
                                         </label>
-                                        <input className="block" type="radio" name="status" id="active" />
+                                        <input className="block" value={1} type="radio" name="status" id="active" />
                                     </div>
                                     <div className="flex">
                                         <label htmlFor="inactive" className="inline-block mr-1">
                                             Inactive
                                         </label>
-                                        <input className="block" type="radio" name="status" id="inactive" />
+                                        <input className="block" value={0} type="radio" name="status" id="inactive" />
                                     </div>
                                 </div>
                             </div>
@@ -209,7 +285,9 @@ function Product() {
                             <Button colorScheme="red" mr={3} onClick={onClose}>
                                 Đóng
                             </Button>
-                            <Button colorScheme="blue">Thêm</Button>
+                            <Button type="submit" colorScheme="blue">
+                                Thêm
+                            </Button>
                         </ModalFooter>
                     </form>
                 </ModalContent>

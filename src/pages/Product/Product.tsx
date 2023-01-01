@@ -73,6 +73,7 @@ function Product() {
                                     isClosable: true,
                                 });
                                 onClose();
+                                dispatch(fetchProductAsync());
                             }
                         })
                         .catch((err) => console.log(err));
@@ -160,7 +161,7 @@ function Product() {
                                         {products?.length > 0 ? (
                                             <Fragment>
                                                 {products?.map((item: any, index: number) => (
-                                                    <tr className="text-left bg-white border-b">
+                                                    <tr key={index} className="text-left bg-white border-b">
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                             {index + 1}
                                                         </td>
@@ -168,14 +169,14 @@ function Product() {
                                                             <div className="flex items-center">
                                                                 <div className="mr-2">
                                                                     <Image
-                                                                        src={item.image}
+                                                                        src={`${url}uploads/${item.image}`}
                                                                         alt={item.name}
                                                                         className="w-16 h-16"
                                                                     />
                                                                 </div>
-                                                                <div>
+                                                                <div className="space-y-2">
                                                                     <h6>{item?.name}</h6>
-                                                                    <h6>category: name</h6>
+                                                                    <h6>Danh mục: {item?.category_name}</h6>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -223,7 +224,7 @@ function Product() {
                                 <select
                                     value={selectValue}
                                     onChange={(e: any) => setSelectValue(e.target.value)}
-                                    className="outline-none bg-slate-100 py-3 px-4 rounded-lg"
+                                    className="w-full outline-none bg-slate-100 py-3 px-4 rounded-lg"
                                 >
                                     {category?.map((item: any, index) => (
                                         <option key={index} value={index + 1}>

@@ -4,11 +4,14 @@ import { fetchProduct, fetchProductByCategory } from './productAPI';
 
 export interface ProductProps {
     id: number;
+    category_id: number;
     name: string;
+    quantity: number;
+    sold: number;
+    description: string;
     price: number;
     image: string;
     status: number;
-    quantity?: number;
 }
 
 export interface ProductState {

@@ -117,7 +117,7 @@ function PaymentModal({ listProducts, payment_mobile_status, orderType, tableId 
                             .then((res) => {
                                 const id = res.payload.id;
                                 if (res.payload.success) {
-                                    listProducts.forEach((product: ProductProps, index: number) => {
+                                    listProducts.forEach((product: any, index: number) => {
                                         dispatch(
                                             createOrderDetailAsync({
                                                 order_id: id,

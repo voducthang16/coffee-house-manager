@@ -4,11 +4,14 @@ import { createOrder, createOrderDetail, changeTableStatus } from './orderAPI';
 
 export interface OrderProps {
     id: number;
+    category_id?: number;
     name: string;
+    description?: string;
     image: string;
     price: number;
     status: number;
     quantity?: number;
+    sold?: number;
     tableId?: number;
 }
 

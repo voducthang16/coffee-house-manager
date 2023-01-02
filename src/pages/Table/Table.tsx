@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useAppSelector, useAppDispatch } from '~/app/hooks';
 import { fetchTableAsync, getTables } from '~/features/table/tableSlice';
 import { setOrderType, setTableId } from '~/features/order/orderSlice';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 function Table() {
     const [status, setStatus] = useState(1);
@@ -10,10 +11,15 @@ function Table() {
     const dispatch = useAppDispatch();
     const tables = useAppSelector(getTables);
     useEffect(() => {
-        dispatch(fetchTableAsync(status));
+        if (tables.length === 0) {
+            dispatch(fetchTableAsync(status));
+        }
     }, [dispatch, status]);
     return (
-        <div>
+        <Fragment>
+            <Helmet>
+                <title>Tại Bàn</title>
+            </Helmet>
             <div className="container pt-20">
                 <div className="text-lg mb-20">
                     <ul className="flex space-x-4">
@@ -46,18 +52,16 @@ function Table() {
                         </li>
                     </ul>
                 </div>
-                <div className="grid grid-cols-5 gap-5">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                     {tables.map((item, index) => (
                         <div key={index} className="col-span-1">
                             <div
                                 onClick={() => {
-                                    // if (item.type === 1) {
                                     navigate('/order');
                                     dispatch(setTableId(item.id));
                                     dispatch(setOrderType(1));
-                                    // }
                                 }}
-                                className={`border ${
+                                className={`border bg-white ${
                                     item.status === 0 ? 'border-slate-300' : 'border-[#28a745]'
                                 } rounded-lg overflow-hidden cursor-pointer`}
                             >
@@ -72,7 +76,7 @@ function Table() {
                     ))}
                 </div>
             </div>
-        </div>
+        </Fragment>
     );
 }
 

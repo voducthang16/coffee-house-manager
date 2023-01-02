@@ -8,10 +8,8 @@ import {
     payment_mobile,
     remove,
     remove_temp,
-    setTableId,
     changeTableStatusAsync,
 } from '~/features/order/orderSlice';
-import { getTablesAvailable } from '~/features/table/tableSlice';
 import PaymentModal from './PaymentModal';
 import { useNavigate } from 'react-router-dom';
 interface PaymentProps {
@@ -40,9 +38,6 @@ function Payment({ listProducts }: PaymentProps) {
     // table id
     const tableId = useAppSelector(getTableId);
 
-    // table available
-    const tableAvailable = useAppSelector(getTablesAvailable);
-
     return (
         <div
             className={`${
@@ -66,7 +61,7 @@ function Payment({ listProducts }: PaymentProps) {
                         )}
                     </h6>
                     {listProducts.length !== 0 ? (
-                        <div className="space-y-4">
+                        <div className="space-y-4 max-h-[500px] overflow-y-auto">
                             {listProducts.map((item, index) => (
                                 <div key={index} className="flex text-sm">
                                     <span className="mr-2 min-w-[24px]">{item.quantity} x</span>
@@ -116,25 +111,7 @@ function Payment({ listProducts }: PaymentProps) {
                         </span>
                     </div>
                     {listProducts.length !== 0 ? (
-                        <div className={`flex ${orderType === 1 ? 'justify-between' : 'justify-end'}`}>
-                            {orderType === 1 && (
-                                <select
-                                    value={tableId ? tableId : 0}
-                                    onChange={(e) => {
-                                        dispatch(setTableId(+e.target.value));
-                                    }}
-                                    className="p-2 rounded-lg bg-[#ff8106] text-white outline-none"
-                                >
-                                    <option value={0} hidden>
-                                        Chọn Bàn
-                                    </option>
-                                    {tableAvailable.map((tab, index) => (
-                                        <option key={index} value={tab.id}>
-                                            Bàn {tab.id}
-                                        </option>
-                                    ))}
-                                </select>
-                            )}
+                        <div className={`flex justify-end`}>
                             {orderType === 0 ? (
                                 <PaymentModal
                                     listProducts={listProducts}

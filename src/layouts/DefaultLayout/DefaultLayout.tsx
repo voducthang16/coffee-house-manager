@@ -1,6 +1,4 @@
 import BottomNavigator from '~/layouts/components/BottomNavigator';
-import Sidebar from '../components/Sidebar';
-import Header from '../components/Header';
 interface DefaultLayoutProps {
     Children: React.ComponentType;
 }
@@ -8,9 +6,7 @@ interface DefaultLayoutProps {
 function DefaultLayout({ Children }: DefaultLayoutProps) {
     return (
         <>
-            {/* <Sidebar /> */}
-            <main className="bg-[#f3f3f9]">
-                {/* <Header /> */}
+            <main className="bg-[#f3f3f9] mb-20 md:mb-0 min-h-screen">
                 <Children />
             </main>
             <BottomNavigator />

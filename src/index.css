@@ -20,7 +20,7 @@
 }
 
 .floor {
-    @apply p-2 rounded-lg border border-slate-200 cursor-pointer font-normal transition-all duration-300;
+    @apply p-2 rounded-lg border border-slate-200 bg-white text-gray-600 shadow-box cursor-pointer font-normal transition-all duration-300;
 }
 
 .floor.active {

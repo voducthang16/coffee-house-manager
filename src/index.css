@@ -43,7 +43,7 @@
 }
 
 .nav-link.active span {
-    @apply text-dark;
+    @apply text-dark font-medium;
 }
 
 .shadow-box {

@@ -15,11 +15,13 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { getCategory, fetchCategoryAsync } from '~/features/category/categorySlice';
-import { getProducts, fetchProductAsync } from '~/features/product/productSlice';
+import { getProducts, fetchProductAsync, fetchProductByCategoryAsync } from '~/features/product/productSlice';
 import { useAppDispatch, useAppSelector } from '~/app/hooks';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Image from '~/components/Image';
+import BreadCrumb from '~/layouts/Breadcrumb/Breadcrumb';
+import Config from '~/config';
 function Product() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const dispatch = useAppDispatch();
@@ -27,13 +29,10 @@ function Product() {
     const category = useAppSelector(getCategory);
     const [image, setImage] = useState('');
     const [selectValue, setSelectValue] = useState(1);
-    const url = 'http://localhost:3001/';
     const toast = useToast();
     useEffect(() => {
-        if (products.length === 0) {
-            dispatch(fetchProductAsync());
-        }
-    }, [dispatch, products.length]);
+        dispatch(fetchProductAsync());
+    }, [dispatch]);
     useEffect(() => {
         if (category.length === 0) {
             dispatch(fetchCategoryAsync());
@@ -45,7 +44,7 @@ function Product() {
         const formData = new FormData();
         formData.append('image', image);
         axios
-            .post(url + 'api/image', formData)
+            .post(Config.apiUrl + 'api/image', formData)
             .then((res) => {
                 if (res.data.code === 200) {
                     const name = document.querySelector('#name') as HTMLInputElement;
@@ -61,7 +60,7 @@ function Product() {
                         status: +status?.value,
                     };
                     axios
-                        .post(url + 'products', data)
+                        .post(Config.apiUrl + 'products', data)
                         .then((res) => {
                             if (res.data) {
                                 toast({
@@ -81,29 +80,41 @@ function Product() {
             })
             .catch((err) => console.log(err));
     };
-
+    const [tab, setTab] = useState(0);
     return (
         <Fragment>
             <Helmet>
                 <title>Sản phẩm</title>
             </Helmet>
-            <div className="bg-white px-6 py-2 flex justify-between shadow-box">
-                <h6 className="font-semibold">Sản phẩm</h6>
-                <p className="flex items-center space-x-2 text-sm">
-                    <Link to={'/dashboard'}>Quản trị</Link>
-                    <RightArrowIcon width={12} height={12} />
-                    <Link to={'/product'}>Sản phẩm</Link>
-                </p>
-            </div>
+            <BreadCrumb page="Sản phẩm" />
             <div className="p-6 lg:space-y-6">
                 <div className="grid grid-cols-12 gap-6">
                     <div className="col-span-3 p-4 bg-white rounded-lg shadow-box">
                         <h6 className="text-lg font-medium text-gray-600">Danh mục</h6>
                         <div>
+                            <h6
+                                onClick={() => {
+                                    setTab(0);
+                                    dispatch(fetchProductAsync());
+                                }}
+                                className={`${
+                                    tab === 0 && 'font-semibold'
+                                } cursor-pointer text-gray-500 py-2 hover:opacity-90`}
+                            >
+                                Tất cả
+                            </h6>
                             {category?.length > 0 && (
                                 <Fragment>
                                     {category?.map((item: any, index: number) => (
-                                        <h6 className="cursor-pointer text-gray-500 py-2 hover:opacity-90">
+                                        <h6
+                                            onClick={() => {
+                                                setTab(index + 1);
+                                                dispatch(fetchProductByCategoryAsync(index + 1));
+                                            }}
+                                            className={`${
+                                                tab === index + 1 && 'font-semibold'
+                                            } cursor-pointer text-gray-500 py-2 hover:opacity-90`}
+                                        >
                                             {item.name}
                                         </h6>
                                     ))}
@@ -169,8 +180,8 @@ function Product() {
                                                             <div className="flex items-center">
                                                                 <div className="mr-2">
                                                                     <Image
-                                                                        src={`${url}uploads/${item.image}`}
-                                                                        alt={item.name}
+                                                                        src={`${Config.apiUrl}uploads/${item?.image}`}
+                                                                        alt={item?.name}
                                                                         className="w-16 h-16"
                                                                     />
                                                                 </div>
@@ -181,13 +192,13 @@ function Product() {
                                                             </div>
                                                         </td>
                                                         <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                            50
+                                                            {item?.quantity}
                                                         </td>
                                                         <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                            59.000
+                                                            {item?.price}
                                                         </td>
                                                         <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                            60
+                                                            {item?.sold}
                                                         </td>
                                                     </tr>
                                                 ))}

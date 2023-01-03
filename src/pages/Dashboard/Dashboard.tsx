@@ -164,6 +164,9 @@ const LineColumnChart = () => {
     );
 };
 
+// QUERY DATA
+// SELECT (SELECT SUM(total) FROM orders) AS 'total', (SELECT COUNT(*) FROM orders) as 'orders', (SELECT COUNT(*) FROM product) as 'product' FROM DUAL;
+
 function Dashboard() {
     const data = [
         {

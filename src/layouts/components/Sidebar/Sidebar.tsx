@@ -2,7 +2,7 @@ import Image from '~/components/Image';
 import images from '~/assets/images';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Box } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import { CashierIcon, CoffeeIcon, DashboardIcon, HomeIcon, RestaurantIcon } from '~/components/Icons';
+import { CashierIcon, CoffeeIcon, CouponIcon, DashboardIcon, HomeIcon, RestaurantIcon } from '~/components/Icons';
 import { Link, NavLink } from 'react-router-dom';
 import { useAppDispatch } from '~/app/hooks';
 function Sidebar() {
@@ -36,17 +36,18 @@ function Sidebar() {
                 <div className="aside-scroll px-4 my-4 mr-2 overflow-hidden">
                     <NavLink
                         to={'/dashboard'}
-                        className="nav-link flex items-center rounded-lg px-4 py-2 cursor-pointer hover:bg-slate-200"
+                        className="nav-link flex items-center rounded-lg px-4 py-2 cursor-pointer"
                     >
                         <DashboardIcon className="mr-4" width={20} height={20} />
-                        <span className="text-xl text-[#00352b]">Tổng quan</span>
+                        <span className="text-xl text-[#00352b]">Tổng Quan</span>
                     </NavLink>
-                    <NavLink
-                        to={'/product'}
-                        className="nav-link flex items-center rounded-lg px-4 py-2 cursor-pointer hover:bg-slate-200"
-                    >
+                    <NavLink to={'/product'} className="nav-link flex items-center rounded-lg px-4 py-2 cursor-pointer">
                         <CoffeeIcon className="mr-4" width={20} height={20} />
-                        <span className="text-xl text-[#00352b]">Sản phẩm</span>
+                        <span className="text-xl text-[#00352b]">Sản Phẩm</span>
+                    </NavLink>
+                    <NavLink to={'/coupon'} className="nav-link flex items-center rounded-lg px-4 py-2 cursor-pointer">
+                        <CouponIcon className="mr-4" width={20} height={20} />
+                        <span className="text-xl text-[#00352b]">Mã Giảm Giá</span>
                     </NavLink>
                     {/* <Accordion allowToggle>
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((index) => (

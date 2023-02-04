@@ -1,5 +1,5 @@
 import Image from '~/components/Image';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useRef } from 'react';
 import { useAppSelector, useAppDispatch } from '~/app/hooks';
 import { getCategory, fetchCategoryAsync, CategoryProps } from '~/features/category/categorySlice';
 import {
@@ -7,6 +7,7 @@ import {
     fetchProductAsync,
     fetchProductByCategoryAsync,
     ProductProps,
+    searchProductAsync,
 } from '~/features/product/productSlice';
 import {
     getProductsOrder,
@@ -24,6 +25,7 @@ import './Order.scss';
 import Payment from '~/layouts/components/Payment';
 import Config from '~/config';
 import { Helmet } from 'react-helmet-async';
+import { useToast } from '@chakra-ui/react';
 function Order() {
     const dispatch = useAppDispatch();
     // all products
@@ -43,14 +45,10 @@ function Order() {
     // 0 - cashier | 1 - table
     const orderType = useAppSelector(getOrderType);
     useEffect(() => {
-        if (products.length === 0) {
-            dispatch(fetchProductAsync());
-        }
+        dispatch(fetchProductAsync());
     }, [dispatch]);
     useEffect(() => {
-        if (category.length === 0) {
-            dispatch(fetchCategoryAsync());
-        }
+        dispatch(fetchCategoryAsync());
     }, [dispatch]);
 
     // get products by table
@@ -115,6 +113,31 @@ function Order() {
             dispatch(fetchProductByCategoryAsync(e.target.value));
         }
     };
+    const toast = useToast();
+    const inputRef = useRef(null);
+
+    const onSearch = (e: any) => {
+        e.preventDefault();
+        const inputElement = inputRef.current as any;
+        const keyword: any = inputElement.value;
+        console.log(keyword);
+        if (keyword.trim() !== '') {
+            dispatch(
+                searchProductAsync({
+                    name: keyword,
+                }),
+            );
+        } else {
+            toast({
+                title: 'warning',
+                description: 'Vui lòng điền tên sản phẩm',
+                status: 'warning',
+                position: 'top-right',
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
 
     return (
         <Fragment>
@@ -171,8 +194,10 @@ function Order() {
                                         ))}
                                     </select>
                                 </div>
-                                <form className="relative flex-1">
+                                <form onSubmit={onSearch} className="relative flex-1">
+                                    <input type="submit" value="" hidden />
                                     <input
+                                        ref={inputRef}
                                         className="input-search input-form"
                                         type="text"
                                         placeholder="Tìm kiếm sản phẩm"

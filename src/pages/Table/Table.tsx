@@ -11,9 +11,7 @@ function Table() {
     const dispatch = useAppDispatch();
     const tables = useAppSelector(getTables);
     useEffect(() => {
-        if (tables.length === 0) {
-            dispatch(fetchTableAsync(status));
-        }
+        dispatch(fetchTableAsync(status));
     }, [dispatch, status]);
     return (
         <Fragment>

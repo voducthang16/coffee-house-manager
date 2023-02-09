@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export function fetchProduct() {
-    return axios.get('http://localhost:3001/products');
+export function fetchProduct(num: number = 1) {
+    return axios.get(`http://localhost:3001/products?page=${num}`);
 }
 
 export function fetchProductByCategory(id: number) {

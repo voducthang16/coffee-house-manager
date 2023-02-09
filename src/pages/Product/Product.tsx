@@ -15,7 +15,7 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { getCategory, fetchCategoryAsync } from '~/features/category/categorySlice';
-import { getProducts, fetchProductAsync, fetchProductByCategoryAsync } from '~/features/product/productSlice';
+import { getProducts, fetchProductAsync, fetchProductByCategoryAsync, getTotal } from '~/features/product/productSlice';
 import { useAppDispatch, useAppSelector } from '~/app/hooks';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -31,7 +31,7 @@ function Product() {
     const [selectValue, setSelectValue] = useState(1);
     const toast = useToast();
     useEffect(() => {
-        dispatch(fetchProductAsync());
+        dispatch(fetchProductAsync(1));
     }, [dispatch]);
     useEffect(() => {
         if (category.length === 0) {
@@ -72,7 +72,7 @@ function Product() {
                                     isClosable: true,
                                 });
                                 onClose();
-                                dispatch(fetchProductAsync());
+                                dispatch(fetchProductAsync(1));
                             }
                         })
                         .catch((err) => console.log(err));
@@ -81,6 +81,10 @@ function Product() {
             .catch((err) => console.log(err));
     };
     const [tab, setTab] = useState(0);
+    // pagination
+    const total = useAppSelector(getTotal);
+    const [pageNumber, setPageNumber] = useState(1);
+    const numberOfPagination = Math.ceil(total / 10);
     return (
         <Fragment>
             <Helmet>
@@ -95,7 +99,8 @@ function Product() {
                             <h6
                                 onClick={() => {
                                     setTab(0);
-                                    dispatch(fetchProductAsync());
+                                    dispatch(fetchProductAsync(1));
+                                    setPageNumber(1);
                                 }}
                                 className={`${
                                     tab === 0 && 'font-semibold'
@@ -110,6 +115,7 @@ function Product() {
                                             onClick={() => {
                                                 setTab(index + 1);
                                                 dispatch(fetchProductByCategoryAsync(index + 1));
+                                                setPageNumber(1);
                                             }}
                                             className={`${
                                                 tab === index + 1 && 'font-semibold'
@@ -208,6 +214,27 @@ function Product() {
                                         )}
                                     </tbody>
                                 </table>
+                            </div>
+                            <div className="pt-4 flex items-center justify-center">
+                                <div className="flex space-x-2">
+                                    {Array.from(Array(numberOfPagination).keys()).map((index) => (
+                                        <div
+                                            onClick={() => {
+                                                if (index + 1 !== pageNumber) {
+                                                    dispatch(fetchProductAsync(index + 1));
+                                                    setPageNumber(index + 1);
+                                                }
+                                            }}
+                                            key={index}
+                                            className={`w-8 h-8 flex items-center justify-center border border-slate-200 rounded-md
+                                            cursor-pointer ${
+                                                pageNumber === index + 1 && '!bg-[#ffcad4] !border-[#ffcad4] !text-dark'
+                                            }`}
+                                        >
+                                            {index + 1}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>

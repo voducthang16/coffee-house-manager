@@ -26,8 +26,8 @@ const initialState: ProductState = {
     status: 'idle',
 };
 
-export const fetchProductAsync = createAsyncThunk('product/fetchProducts', async () => {
-    const response = await fetchProduct();
+export const fetchProductAsync = createAsyncThunk('product/fetchProducts', async (num: number) => {
+    const response = await fetchProduct(num);
     return response.data;
 });
 
@@ -61,6 +61,7 @@ export const productSlice = createSlice({
             .addCase(fetchProductByCategoryAsync.fulfilled, (state, action) => {
                 state.status = 'idle';
                 state.value = action.payload.data;
+                state.total = action.payload.total;
             })
             .addCase(searchProductAsync.fulfilled, (state, action) => {
                 state.status = 'idle';

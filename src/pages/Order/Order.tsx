@@ -45,7 +45,7 @@ function Order() {
     // 0 - cashier | 1 - table
     const orderType = useAppSelector(getOrderType);
     useEffect(() => {
-        dispatch(fetchProductAsync());
+        dispatch(fetchProductAsync(1));
     }, [dispatch]);
     useEffect(() => {
         dispatch(fetchCategoryAsync());
@@ -108,7 +108,7 @@ function Order() {
     const handleChangeSelect = (e: any) => {
         setSelectValue(e.target.value);
         if (+e.target.value === 0) {
-            dispatch(fetchProductAsync());
+            dispatch(fetchProductAsync(1));
         } else {
             dispatch(fetchProductByCategoryAsync(e.target.value));
         }
@@ -152,7 +152,7 @@ function Order() {
                                 <li
                                     onClick={() => {
                                         setTab(0);
-                                        dispatch(fetchProductAsync());
+                                        dispatch(fetchProductAsync(1));
                                     }}
                                     className={`${
                                         tab === 0 ? '!bg-[#ff9d00] !text-white' : null

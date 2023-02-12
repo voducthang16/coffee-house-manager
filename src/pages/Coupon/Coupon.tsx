@@ -20,11 +20,15 @@ import DatePicker, { ReactDatePickerProps, registerLocale } from 'react-datepick
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import Config from '~/config';
+import { useAppDispatch, useAppSelector } from '~/app/hooks';
+import { getCoupons, fetchCouponAsync } from '~/features/coupon/couponSlice';
 interface Props extends Omit<ReactDatePickerProps, 'onChange'> {
     onClick(): void;
 }
 
 function Coupon() {
+    const dispatch = useAppDispatch();
+    const couponList = useAppSelector(getCoupons);
     const currentDate = new Date();
     const previousDate = new Date(new Date().getTime());
     previousDate.setDate(new Date().getDate() - 1);
@@ -122,6 +126,11 @@ function Coupon() {
             reset({}, { keepDefaultValues: true });
         }
     }, [formState, reset]);
+
+    useEffect(() => {
+        dispatch(fetchCouponAsync(1));
+    }, []);
+
     return (
         <Fragment>
             <Helmet>
@@ -146,58 +155,64 @@ function Coupon() {
                                         <th scope="col" className="w-[5%] text-sm font-medium text-gray-900 px-6 py-3">
                                             #
                                         </th>
-                                        <th scope="col" className="w-[30%] text-sm font-medium text-gray-900 px-6 py-3">
-                                            Sản phẩm
+                                        <th scope="col" className="w-[10%] text-sm font-medium text-gray-900 px-6 py-3">
+                                            Code
                                         </th>
                                         <th scope="col" className="w-[10%] text-sm font-medium text-gray-900 px-6 py-3">
-                                            Số lượng
+                                            % giảm giá
                                         </th>
                                         <th scope="col" className="w-[10%] text-sm font-medium text-gray-900 px-6 py-3">
-                                            Giá
+                                            Đơn hàng tối thiểu
                                         </th>
                                         <th scope="col" className="w-[10%] text-sm font-medium text-gray-900 px-6 py-3">
-                                            Đặt mua
+                                            Giảm giá tối đa
+                                        </th>
+                                        <th scope="col" className="w-[10%] text-sm font-medium text-gray-900 px-6 py-3">
+                                            Đã sử dụng
+                                        </th>
+                                        <th scope="col" className="w-[10%] text-sm font-medium text-gray-900 px-6 py-3">
+                                            Thời gian
+                                        </th>
+                                        <th scope="col" className="w-[10%] text-sm font-medium text-gray-900 px-6 py-3">
+                                            Trạng thái
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* {products?.length > 0 ? (
-                                            <Fragment>
-                                                {products?.map((item: any, index: number) => (
-                                                    <tr key={index} className="text-left bg-white border-b">
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                            {index + 1}
-                                                        </td>
-                                                        <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                            <div className="flex items-center">
-                                                                <div className="mr-2">
-                                                                    <Image
-                                                                        src={`${url}uploads/${item?.image}`}
-                                                                        alt={item?.name}
-                                                                        className="w-16 h-16"
-                                                                    />
-                                                                </div>
-                                                                <div className="space-y-2">
-                                                                    <h6>{item?.name}</h6>
-                                                                    <h6>Danh mục: {item?.category_name}</h6>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                            {item?.quantity}
-                                                        </td>
-                                                        <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                            {item?.price}
-                                                        </td>
-                                                        <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                                            {item?.sold}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </Fragment>
-                                        ) : (
-                                            <div>Chưa có sản phẩm</div>
-                                        )} */}
+                                    {couponList?.length > 0 ? (
+                                        <Fragment>
+                                            {couponList?.map((item: any, index: number) => (
+                                                <tr key={index} className="text-left bg-white border-b">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        {index + 1}
+                                                    </td>
+                                                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                        {item?.code}
+                                                    </td>
+                                                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                        {item?.discount_value}
+                                                    </td>
+                                                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                        {item?.min_order}
+                                                    </td>
+                                                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                        {item?.discount_max}
+                                                    </td>
+                                                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                        {item?.used}
+                                                    </td>
+                                                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                        {convertDate(item?.start_date)} - {convertDate(item?.end_date)}
+                                                    </td>
+                                                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                                        {item?.status === 1 ? 'Active' : 'Inactive'}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </Fragment>
+                                    ) : (
+                                        <div>Chưa có mã giảm giá</div>
+                                    )}
                                 </tbody>
                             </table>
                         </div>

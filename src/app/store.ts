@@ -4,6 +4,7 @@ import productReducer from '~/features/product/productSlice';
 import orderReducer from '~/features/order/orderSlice';
 import categoryReducer from '~/features/category/categorySlice';
 import tableReducer from '~/features/table/tableSlice';
+import couponReducer from '~/features/coupon/couponSlice';
 import { persistStore, persistReducer, FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
     category: categoryReducer,
     product: productReducer,
     table: tableReducer,
+    coupon: couponReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
